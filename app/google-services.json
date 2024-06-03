@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "839459190719",
+    "project_id": "filesviewer-d51d5",
+    "storage_bucket": "filesviewer-d51d5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:839459190719:android:1ca5df1f9ab206e0a6530a",
+        "android_client_info": {
+          "package_name": "com.alon.filesviewer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvuxeM9LPuBSaFs9yP_TCLt_jHK5i-VYY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
