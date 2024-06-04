@@ -18,7 +18,9 @@ tasks.register("unitTests") {
 
 // Custom task that runs all feature/acceptance tests (integration test in scope) for this app
 tasks.register("featureTests") {
-    dependsOn(
-        subprojects.find { project -> project.name == "featureTesting" }!!.tasks.named("testDebugUnitTest")
-    )
+    subprojects.forEach { subproject ->
+        if (subproject.plugins.findPlugin("com.android.library") != null && subproject.name == "featureTesting") {
+            dependsOn(subproject.tasks.named("testDebugUnitTest"))
+        }
+    }
 }
