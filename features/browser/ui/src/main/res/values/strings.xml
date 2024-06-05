@@ -1,0 +1,12 @@
+<resources>
+    <string name="title_action_search">search</string>
+    <string name="title_action_view_search">" "</string>
+    <string name="text_chip_filter_all">All</string>
+    <string name="text_chip_filter_images">Images</string>
+    <string name="text_chip_filter_videos">Videos</string>
+    <string name="text_chip_filter_audio">Audio</string>
+    <string name="text_chip_filter_download">Download</string>
+    <string name="search_hint">Search files</string>
+    <string name="error_feature">Feature Error</string>
+    <string name="action_done">done</string>
+</resources>

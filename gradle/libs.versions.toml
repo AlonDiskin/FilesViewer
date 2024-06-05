@@ -7,6 +7,19 @@ junitVersion = "1.1.5"
 espressoCore = "3.5.1"
 appcompat = "1.6.1"
 material = "1.12.0"
+jetbrainsKotlinJvm = "1.9.0"
+rxKotlin = "2.3.0"
+rxJava = "2.2.19"
+rxAndroid = "2.1.1"
+mockk = "1.13.10"
+javaInject = "1"
+googleTruth = "1.0.1"
+junitParams = "1.1.1"
+roboLectric = "4.12"
+hilt = "2.51.1"
+dataBindingCompiler = "8.3.2"
+activity = "1.8.0"
+constraintlayout = "2.1.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -15,8 +28,26 @@ androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "j
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+rxKotlin = { group = "io.reactivex.rxjava2", name = "rxkotlin", version.ref = "rxKotlin" }
+rxJava = { group = "io.reactivex.rxjava2", name = "rxjava", version.ref = "rxJava" }
+rxAndroid = { group = "io.reactivex.rxjava2", name = "rxandroid", version.ref = "rxAndroid" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+javaInject = { group = "javax.inject", name = "javax.inject", version.ref = "javaInject" }
+googleTruth = { group = "com.google.truth", name = "truth", version.ref = "googleTruth" }
+junitParams = { group = "pl.pragmatists", name = "JUnitParams", version.ref = "junitParams" }
+roboLectric = { group = "org.robolectric", name = "robolectric", version.ref = "roboLectric" }
+hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hiltCompiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+hiltTest = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
+dataBindingCompiler = { group = "androidx.databinding", name = "databinding-compiler", version.ref = "dataBindingCompiler" }
+androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+activityKtx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activity" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+androidLibrary = { id = "com.android.library", version.ref = "agp" }
+jetbrainsKotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 

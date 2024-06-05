@@ -16,9 +16,13 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        jcenter()
     }
 }
 
 rootProject.name = "FilesViewer"
 include(":app")
- 
+include(":features:browser:featureTesting")
+include(":features:browser:domain")
+include(":features:browser:data")
+include(":features:browser:ui")
