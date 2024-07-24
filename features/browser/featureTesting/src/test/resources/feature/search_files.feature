@@ -15,3 +15,23 @@ Feature: Search device files
       | metallica.mp3,meta.png,metal.pdf | meta         | image        | meta.png                         |
       | metallica.mp3,meta.png,metal.pdf | meta         | audio        | metallica.mp3                    |
       | metallica.mp3,meta.png,metal.pdf | meta         | video        | none                             |
+
+  @open-file
+  Scenario Outline: Open searched file
+    Given user has an "<file_type>" file on device
+    When user find file via search
+    And select to open file
+    Then app should allow user to open file via device app chooser
+    Examples:
+      | file_type |
+      | image     |
+      | audio     |
+      | video     |
+  
+  @open-dir
+  Scenario: Open directory result
+    Given user has a directory called music
+    When he find dir via search
+    And select to open it
+    Then app should open directory files in browser screen
+

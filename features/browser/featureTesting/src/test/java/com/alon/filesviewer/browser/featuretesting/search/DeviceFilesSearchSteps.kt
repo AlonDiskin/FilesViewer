@@ -1,7 +1,9 @@
 package com.alon.filesviewer.browser.featuretesting.search
 
+import android.net.Uri
 import android.os.Environment
 import android.os.Looper
+import androidx.core.content.FileProvider
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
@@ -36,6 +38,7 @@ class DeviceFilesSearchSteps(private val mediaContentProvider: FakeMediaContentP
 
     init {
         mockkStatic(Environment::class)
+        mockkStatic(FileProvider::class)
     }
 
     @Given("^user device has files named \"([^\"]*)\"$")
@@ -67,6 +70,7 @@ class DeviceFilesSearchSteps(private val mediaContentProvider: FakeMediaContentP
 
         every { Environment.getExternalStorageDirectory() } returns rootMockFile
         every { rootMockFile.path } returns rootDir.root.path
+        every { FileProvider.getUriForFile(any(),any(),any()) } returns Uri.EMPTY
     }
 
     @When("^he open search screen$")

@@ -60,6 +60,7 @@ dependencies {
     testImplementation(libs.androidx.junit)
     testImplementation(libs.androidx.espresso.core)
     testImplementation("androidx.arch.core:core-testing:2.1.0")
+    testImplementation("androidx.test.espresso:espresso-intents:3.3.0")
     testImplementation(libs.mockk)
     testImplementation(libs.googleTruth)
     testImplementation(libs.junitParams)

@@ -1,5 +1,8 @@
 package com.alon.filesviewer.browser.ui
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Looper
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
@@ -11,22 +14,25 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.pressImeActionButton
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.contrib.RecyclerViewActions.scrollToPosition
-import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.matcher.IntentMatchers
+import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.alon.filesviewer.browser.domain.model.BrowserError
 import com.alon.filesviewer.browser.domain.model.DeviceFileType
 import com.alon.filesviewer.browser.domain.model.SearchFilter
 import com.alon.filesviewer.browser.ui.RecyclerViewMatcher.withRecyclerView
 import com.alon.filesviewer.browser.ui.controller.SearchActivity
-import com.alon.filesviewer.browser.ui.controller.SearchResultsAdapter
-import com.alon.filesviewer.browser.ui.controller.SearchResultsAdapter.*
+import com.alon.filesviewer.browser.ui.controller.SearchResultsAdapter.FileViewHolder
 import com.alon.filesviewer.browser.ui.data.FileUiState
 import com.alon.filesviewer.browser.ui.data.SearchUiState
 import com.alon.filesviewer.browser.ui.viewmodel.SearchViewModel
-import com.google.common.truth.Truth
-import com.google.common.truth.Truth.*
+import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkConstructor
@@ -152,17 +158,23 @@ class SearchActivityTest {
             FileUiState(
                 "path_1",
                 "name_1",
-                DeviceFileType.DIR
+                DeviceFileType.DIR,
+                Uri.EMPTY,
+                "mime_1"
             ),
             FileUiState(
                 "path_2",
                 "name_2",
-                DeviceFileType.VIDEO
+                DeviceFileType.VIDEO,
+                Uri.EMPTY,
+                "mime_2"
             ),
             FileUiState(
                 "path_3",
                 "name_3",
-                DeviceFileType.AUDIO
+                DeviceFileType.AUDIO,
+                Uri.EMPTY,
+                "mime_3"
             )
         )
 
@@ -171,8 +183,6 @@ class SearchActivityTest {
         Shadows.shadowOf(Looper.getMainLooper()).idle()
 
         // Then
-        // Temporary fix for ListAdapter AsyncDiff thread not sync with espresso
-        Thread.sleep(2000)
         onView(withId(R.id.searchResults))
             .check(matches(withRecyclerViewSize(expectedResults.size)))
         expectedResults.forEachIndexed { index, fileUiState ->
@@ -228,5 +238,73 @@ class SearchActivityTest {
         scenario.onActivity { activity ->
             assertThat(activity.isFinishing).isTrue()
         }
+    }
+
+    @Test
+    fun openSearchResultFileViaAppChooser_WhenSelectedByUserAndFileIsNotDir() {
+        // Given
+        val results = listOf(
+            FileUiState(
+                "path",
+                "name",
+                DeviceFileType.TEXT,
+                Uri.EMPTY,
+                "mime"
+            )
+        )
+        uiState.value = SearchUiState(results = results)
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+        Intents.init()
+
+        // When
+        onView(withText(results.first().name))
+            .perform(click())
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        // Then
+        Intents.intended(IntentMatchers.hasAction(Intent.ACTION_CHOOSER))
+        val intent = Intents.getIntents().first().extras?.get(Intent.EXTRA_INTENT) as Intent
+
+        assertThat(intent.action).isEqualTo(Intent.ACTION_VIEW)
+        assertThat(intent.flags).isEqualTo(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        assertThat(intent.data).isEqualTo(results.first().uri)
+        assertThat(intent.type).isEqualTo(results.first().mime)
+
+        Intents.release()
+    }
+
+    @Test
+    fun openSearchResultDirInBrowserScreen_WhenSelectedByUser() {
+        // Given
+        val results = listOf(
+            FileUiState(
+                "path",
+                "name",
+                DeviceFileType.DIR,
+                Uri.EMPTY,
+                "mime"
+            )
+        )
+        scenario = ActivityScenario.launchActivityForResult(SearchActivity::class.java)
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        uiState.value = SearchUiState(results = results)
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        // When
+        onView(withId(R.id.searchResults))
+            .perform(
+                RecyclerViewActions.actionOnItemAtPosition<FileViewHolder>(
+                    0,
+                    click()
+                )
+            )
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        // Then
+        assertThat(scenario.result.resultCode).isEqualTo(Activity.RESULT_OK)
+        assertThat(scenario.result.resultData.getStringExtra(SearchActivity.RESULT_DIR_PATH))
+            .isEqualTo(results.first().path)
+        scenario.onActivity { assertThat(it.isFinishing).isTrue() }
     }
 }

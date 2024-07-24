@@ -1,5 +1,8 @@
 package com.alon.filesviewer.browser.ui.controller
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -13,17 +16,24 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.databinding.DataBindingUtil
 import com.alon.filesviewer.browser.domain.model.BrowserError
+import com.alon.filesviewer.browser.domain.model.DeviceFileType
 import com.alon.filesviewer.browser.domain.model.SearchFilter
 import com.alon.filesviewer.browser.ui.R
+import com.alon.filesviewer.browser.ui.data.FileUiState
 import com.alon.filesviewer.browser.ui.databinding.ActivitySearchBinding
 import com.alon.filesviewer.browser.ui.viewmodel.SearchViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.migration.OptionalInject
+import java.io.File
 
 @AndroidEntryPoint
 @OptionalInject
 class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
+
+    companion object {
+        const val RESULT_DIR_PATH = "dir path"
+    }
 
     private lateinit var layout: ActivitySearchBinding
     private val viewModel: SearchViewModel by viewModels()
@@ -43,7 +53,7 @@ class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener, Menu
         setSupportActionBar(layout.toolbar)
 
         // Set search results recycler view
-        val adapter = SearchResultsAdapter()
+        val adapter = SearchResultsAdapter(::onResultClick)
         layout.searchResults.adapter = adapter
 
         // Set search filters chip group listener
@@ -129,6 +139,28 @@ class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener, Menu
                        snackbar.show()
                    }
                }
+        }
+    }
+
+    private fun onResultClick(file: FileUiState) {
+        // Open selected file
+        openFile(file)
+    }
+
+    private fun openFile(file: FileUiState) {
+        // If file is not a dir, open via device app chooser, else
+        // open dir files ion browser activity via activity result
+        if (file.type != DeviceFileType.DIR) {
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(file.uri,file.mime)
+                setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            val chooser = Intent.createChooser(intent, getString(R.string.title_app_chooser))
+
+            startActivity(chooser)
+        } else {
+            setResult(Activity.RESULT_OK,Intent().apply { putExtra(RESULT_DIR_PATH,file.path) })
+            finish()
         }
     }
 }

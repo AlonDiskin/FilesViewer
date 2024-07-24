@@ -9,4 +9,6 @@
     <string name="search_hint">Search files</string>
     <string name="error_feature">Feature Error</string>
     <string name="action_done">done</string>
+    <string name="title_open_file">Open file</string>
+    <string name="title_app_chooser">Open file</string>
 </resources>

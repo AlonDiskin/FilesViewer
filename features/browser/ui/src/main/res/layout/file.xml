@@ -5,14 +5,21 @@
 
     <data>
         <import type="com.alon.filesviewer.browser.ui.data.FileUiState"/>
+        <import type="kotlin.jvm.functions.Function1"/>
+        <import type="kotlin.Unit"/>
         <variable
             name="file"
             type="FileUiState" />
+        <variable
+            name="clickListener"
+            type="Function1&lt;FileUiState,Unit>" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:onClick="@{() -> clickListener.invoke(file)}">
 
         <ImageView
             android:id="@+id/fileIcon"

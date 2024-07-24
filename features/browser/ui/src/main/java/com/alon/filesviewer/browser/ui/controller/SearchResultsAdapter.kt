@@ -8,7 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.alon.filesviewer.browser.ui.data.FileUiState
 import com.alon.filesviewer.browser.ui.databinding.FileBinding
 
-class SearchResultsAdapter : ListAdapter<FileUiState,SearchResultsAdapter.FileViewHolder>(DIFF_CALLBACK) {
+class SearchResultsAdapter(
+    private val clickListener: (FileUiState) -> (Unit)
+) : ListAdapter<FileUiState,SearchResultsAdapter.FileViewHolder>(DIFF_CALLBACK) {
 
     companion object {
 
@@ -29,7 +31,7 @@ class SearchResultsAdapter : ListAdapter<FileUiState,SearchResultsAdapter.FileVi
             parent,
             false
         )
-        return FileViewHolder(binding)
+        return FileViewHolder(binding,clickListener)
     }
 
     override fun onBindViewHolder(holder: FileViewHolder, position: Int) {
@@ -37,8 +39,13 @@ class SearchResultsAdapter : ListAdapter<FileUiState,SearchResultsAdapter.FileVi
     }
 
     class FileViewHolder(
-        private val binding: FileBinding
+        private val binding: FileBinding,
+        clickListener: (FileUiState) -> (Unit)
     ) : RecyclerView.ViewHolder(binding.root) {
+
+        init {
+            binding.clickListener = clickListener
+        }
 
         fun bind(file: FileUiState) {
             binding.file = file

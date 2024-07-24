@@ -65,7 +65,8 @@ dependencies {
     kapt(libs.hiltCompiler)
 
     // Local testing
-    testImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
+    testImplementation("androidx.test.espresso:espresso-contrib:3.6.0")
+    testImplementation("androidx.test.espresso:espresso-intents:3.3.0")
     testImplementation(libs.junit)
     testImplementation(libs.androidx.junit)
     testImplementation(libs.androidx.espresso.core)
