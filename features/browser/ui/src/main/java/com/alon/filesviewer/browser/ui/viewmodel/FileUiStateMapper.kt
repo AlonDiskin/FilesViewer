@@ -7,6 +7,7 @@ import com.alon.filesviewer.browser.domain.model.DeviceFile
 import com.alon.filesviewer.browser.ui.data.FileUiState
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ViewModelScoped
+import org.apache.commons.io.FileUtils
 import java.io.File
 import javax.inject.Inject
 
@@ -27,7 +28,12 @@ class FileUiStateMapper @Inject constructor(
             file.name,
             file.type,
             uri,
-            MimeTypeMap.getSingleton().getMimeTypeFromExtension(format) ?: ""
+            MimeTypeMap.getSingleton().getMimeTypeFromExtension(format) ?: "",
+            convertSize(file.size)
         )
+    }
+
+    private fun convertSize(size: Long): String {
+        return FileUtils.byteCountToDisplaySize(size)
     }
 }

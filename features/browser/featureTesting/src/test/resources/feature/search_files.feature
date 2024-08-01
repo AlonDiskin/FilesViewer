@@ -35,3 +35,10 @@ Feature: Search device files
     And select to open it
     Then app should open directory files in browser screen
 
+  @show-detail
+  Scenario: Show file detail
+    Given user has an audio file on device
+    When he find it via search
+    And select to view its detail info
+    Then app should show file detail
+

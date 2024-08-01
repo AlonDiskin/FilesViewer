@@ -1,17 +1,21 @@
 package com.alon.filesviewer.browser.ui.controller
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.databinding.DataBindingUtil
@@ -22,10 +26,10 @@ import com.alon.filesviewer.browser.ui.R
 import com.alon.filesviewer.browser.ui.data.FileUiState
 import com.alon.filesviewer.browser.ui.databinding.ActivitySearchBinding
 import com.alon.filesviewer.browser.ui.viewmodel.SearchViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.migration.OptionalInject
-import java.io.File
 
 @AndroidEntryPoint
 @OptionalInject
@@ -49,11 +53,14 @@ class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener, Menu
             insets
         }
 
+        // Check storage permission
+        finishIfStoragePermissionMissing()
+
         // Setup toolbar
         setSupportActionBar(layout.toolbar)
 
         // Set search results recycler view
-        val adapter = SearchResultsAdapter(::onResultClick)
+        val adapter = SearchResultsAdapter(::onResultClick,::onResultMenuClick)
         layout.searchResults.adapter = adapter
 
         // Set search filters chip group listener
@@ -160,6 +167,43 @@ class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener, Menu
             startActivity(chooser)
         } else {
             setResult(Activity.RESULT_OK,Intent().apply { putExtra(RESULT_DIR_PATH,file.path) })
+            finish()
+        }
+    }
+
+    private fun onResultMenuClick(file: FileUiState,view: View) {
+        PopupMenu(this, view).apply {
+            setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    R.id.action_detail -> {
+                        showFileDetail(file)
+                        true
+                    }
+
+                    else -> false
+                }
+            }
+            inflate(R.menu.menu_file)
+            show()
+        }
+    }
+
+    private fun showFileDetail(file: FileUiState) {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.title_dialog_file_detail))
+            .setMessage(getString(R.string.file_detail,file.name,file.path,file.size))
+            .setPositiveButton(getString(R.string.button_dialog_positive)) { dialog, which -> dialog.dismiss() }
+            .show()
+    }
+
+    private fun finishIfStoragePermissionMissing() {
+        // Check runtime permission for storage access , and finish if its missing
+        if (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            !Environment.isExternalStorageManager()
+        } else {
+            (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED)
+        }) {
             finish()
         }
     }

@@ -20,6 +20,7 @@ hilt = "2.51.1"
 dataBindingCompiler = "8.3.2"
 activity = "1.8.0"
 constraintlayout = "2.1.4"
+greenCoffee = "3.6.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -43,6 +44,7 @@ dataBindingCompiler = { group = "androidx.databinding", name = "databinding-comp
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 activityKtx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activity" }
+greenCoffee = { group = "com.github.mauriciotogneri", name = "green-coffee", version.ref = "greenCoffee" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

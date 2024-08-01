@@ -1,6 +1,7 @@
 package com.alon.filesviewer.browser.ui.controller
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -9,7 +10,8 @@ import com.alon.filesviewer.browser.ui.data.FileUiState
 import com.alon.filesviewer.browser.ui.databinding.FileBinding
 
 class SearchResultsAdapter(
-    private val clickListener: (FileUiState) -> (Unit)
+    private val clickListener: (FileUiState) -> (Unit),
+    private val menuClickListener: (FileUiState, View) -> (Unit)
 ) : ListAdapter<FileUiState,SearchResultsAdapter.FileViewHolder>(DIFF_CALLBACK) {
 
     companion object {
@@ -31,7 +33,7 @@ class SearchResultsAdapter(
             parent,
             false
         )
-        return FileViewHolder(binding,clickListener)
+        return FileViewHolder(binding,clickListener,menuClickListener)
     }
 
     override fun onBindViewHolder(holder: FileViewHolder, position: Int) {
@@ -40,11 +42,13 @@ class SearchResultsAdapter(
 
     class FileViewHolder(
         private val binding: FileBinding,
-        clickListener: (FileUiState) -> (Unit)
+        clickListener: (FileUiState) -> (Unit),
+        menuClickListener: (FileUiState,View) -> (Unit)
     ) : RecyclerView.ViewHolder(binding.root) {
 
         init {
             binding.clickListener = clickListener
+            binding.menuClickListener = menuClickListener
         }
 
         fun bind(file: FileUiState) {

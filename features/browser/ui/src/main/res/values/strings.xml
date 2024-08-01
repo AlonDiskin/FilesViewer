@@ -11,4 +11,12 @@
     <string name="action_done">done</string>
     <string name="title_open_file">Open file</string>
     <string name="title_app_chooser">Open file</string>
+    <string name="title_action_detail">File Detail</string>
+    <string name="title_action_share">Share file</string>
+    <string name="title_action_open">Open file</string>
+    <string name="file_detail">Name: %1$s\n\nPath: %2$s\n\nSize: %3$s</string>
+    <string name="title_dialog_file_detail">File detail</string>
+    <string name="button_dialog_positive">OK</string>
+    <string name="title_action_nav_search">Search</string>
+    <string name="title_app_name">FilesViewer</string>
 </resources>
