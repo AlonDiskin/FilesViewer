@@ -7,4 +7,5 @@ data class FileUiState(val path: String,
                        val name: String,
                        val type: DeviceFileType,
                        val uri: Uri,
-                       val mime: String)
+                       val mime: String,
+                       val size: String)

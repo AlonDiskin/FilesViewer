@@ -52,6 +52,8 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.activityKtx)
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.constraintlayout)
 
     // Rx
     implementation(libs.rxKotlin)
@@ -60,9 +62,10 @@ dependencies {
 
     // Hilt
     implementation(libs.hilt)
-    implementation(libs.androidx.activity)
-    implementation(libs.androidx.constraintlayout)
     kapt(libs.hiltCompiler)
+
+    // Apache commons
+    implementation("commons-io:commons-io:2.16.1")
 
     // Local testing
     testImplementation("androidx.test.espresso:espresso-contrib:3.6.0")

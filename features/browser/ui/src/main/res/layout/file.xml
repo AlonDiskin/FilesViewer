@@ -6,6 +6,8 @@
     <data>
         <import type="com.alon.filesviewer.browser.ui.data.FileUiState"/>
         <import type="kotlin.jvm.functions.Function1"/>
+        <import type="kotlin.jvm.functions.Function2"/>
+        <import type="android.view.View"/>
         <import type="kotlin.Unit"/>
         <variable
             name="file"
@@ -13,6 +15,9 @@
         <variable
             name="clickListener"
             type="Function1&lt;FileUiState,Unit>" />
+        <variable
+            name="menuClickListener"
+            type="Function2&lt;FileUiState,View,Unit>" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -39,6 +44,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:maxLines="1"
             android:ellipsize="end"
             android:text="@{file.name}"
             android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
@@ -58,17 +64,9 @@
             app:layout_constraintBottom_toBottomOf="@+id/fileIcon"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="16dp"
+            android:onClick="@{(v) -> menuClickListener.invoke(file,v)}"
             app:layout_constraintTop_toTopOf="@+id/fileIcon"
             app:srcCompat="@drawable/round_more_vert_24" />
-
-        <!--    <View-->
-        <!--        android:layout_width="0dp"-->
-        <!--        android:layout_height="0.3dp"-->
-        <!--        app:layout_constraintEnd_toEndOf="@+id/fileDetail"-->
-        <!--        android:background="@color/black"-->
-        <!--        android:layout_marginTop="5dp"-->
-        <!--        app:layout_constraintStart_toStartOf="@+id/fileLastModified"-->
-        <!--        app:layout_constraintTop_toBottomOf="@+id/fileIcon" />-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

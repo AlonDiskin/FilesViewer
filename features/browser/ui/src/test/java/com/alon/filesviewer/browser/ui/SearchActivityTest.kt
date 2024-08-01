@@ -1,13 +1,21 @@
 package com.alon.filesviewer.browser.ui
 
+import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
+import android.os.Environment
 import android.os.Looper
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelLazy
 import androidx.test.core.app.ActivityScenario
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions.click
@@ -18,6 +26,8 @@ import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.contrib.RecyclerViewActions.scrollToPosition
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
+import androidx.test.espresso.matcher.RootMatchers.isDialog
+import androidx.test.espresso.matcher.RootMatchers.isPlatformPopup
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -36,6 +46,7 @@ import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkConstructor
+import io.mockk.mockkStatic
 import io.mockk.verify
 import org.hamcrest.CoreMatchers.allOf
 import org.junit.Before
@@ -43,10 +54,14 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Shadows
+import org.robolectric.annotation.Config
 import org.robolectric.annotation.LooperMode
+import org.robolectric.shadows.ShadowDialog
+import org.robolectric.shadows.ShadowPackageManager
 
 @RunWith(AndroidJUnit4::class)
 @LooperMode(LooperMode.Mode.PAUSED)
+@Config(sdk = [Build.VERSION_CODES.UPSIDE_DOWN_CAKE])
 class SearchActivityTest {
 
     @JvmField
@@ -72,9 +87,76 @@ class SearchActivityTest {
         // Stub mocked view model
         every { viewModel.searchUiState } returns uiState
 
+        // Stub storage permission as granted
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            mockkStatic(Environment::class)
+            every { Environment.isExternalStorageManager() } returns true
+        } else {
+            mockkStatic(ContextCompat::class)
+            every {
+                ContextCompat.checkSelfPermission(
+                    any(), // activity context not yet available
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                )
+            } returns PackageManager.PERMISSION_GRANTED
+        }
+
         // Launch activity under test
         scenario = ActivityScenario.launch(SearchActivity::class.java)
         Shadows.shadowOf(Looper.getMainLooper()).idle()
+    }
+
+    @Test
+    fun closeAndOpenMainAppActivity_WhenCreatedAndStoragePermissionMissing() {
+        // Given
+        every { Environment.isExternalStorageManager() } returns false
+
+        // When
+        scenario.recreate()
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        // Then
+        scenario.onActivity { activity ->
+            assertThat(activity.isFinishing).isTrue()
+        }
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.N])
+    fun closeAndOpenMainAppActivity_WhenCreatedAndStoragePermissionMissingApi24() {
+        // Given
+        every {
+            ContextCompat.checkSelfPermission(
+                any(), // activity context not yet available
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+        } returns PackageManager.PERMISSION_DENIED
+
+        // When
+        scenario.recreate()
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        // Then
+        scenario.onActivity { activity ->
+            assertThat(activity.isFinishing).isTrue()
+        }
+    }
+
+    @Test
+    fun launchActivity_WhenCreatedAndStoragePermissionExist() {
+        // Given
+
+        // Then
+        assertThat(scenario.state).isEqualTo(Lifecycle.State.RESUMED)
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.N])
+    fun launchActivity_WhenCreatedAndStoragePermissionExistApi24() {
+        // Given
+
+        // Then
+        assertThat(scenario.state).isEqualTo(Lifecycle.State.RESUMED)
     }
 
     @Test
@@ -160,21 +242,24 @@ class SearchActivityTest {
                 "name_1",
                 DeviceFileType.DIR,
                 Uri.EMPTY,
-                "mime_1"
+                "mime_1",
+                "size_1"
             ),
             FileUiState(
                 "path_2",
                 "name_2",
                 DeviceFileType.VIDEO,
                 Uri.EMPTY,
-                "mime_2"
+                "mime_2",
+                "size_2"
             ),
             FileUiState(
                 "path_3",
                 "name_3",
                 DeviceFileType.AUDIO,
                 Uri.EMPTY,
-                "mime_3"
+                "mime_3",
+                "size_3"
             )
         )
 
@@ -249,7 +334,8 @@ class SearchActivityTest {
                 "name",
                 DeviceFileType.TEXT,
                 Uri.EMPTY,
-                "mime"
+                "mime",
+                "size"
             )
         )
         uiState.value = SearchUiState(results = results)
@@ -282,7 +368,8 @@ class SearchActivityTest {
                 "name",
                 DeviceFileType.DIR,
                 Uri.EMPTY,
-                "mime"
+                "mime",
+                "size"
             )
         )
         scenario = ActivityScenario.launchActivityForResult(SearchActivity::class.java)
@@ -306,5 +393,44 @@ class SearchActivityTest {
         assertThat(scenario.result.resultData.getStringExtra(SearchActivity.RESULT_DIR_PATH))
             .isEqualTo(results.first().path)
         scenario.onActivity { assertThat(it.isFinishing).isTrue() }
+    }
+
+    @Test
+    fun showResultFileDetail_WhenUserSelectFromMenu() {
+        // Given
+        val file = FileUiState(
+            "path",
+            "name",
+            DeviceFileType.DIR,
+            Uri.EMPTY,
+            "mime",
+            "3 mb"
+        )
+
+        uiState.value = SearchUiState(results = listOf(file))
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        // When
+        onView(withId(R.id.fileDetail))
+            .perform(click())
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        onView(withText(R.string.title_action_detail))
+            .inRoot(isPlatformPopup())
+            .perform(click())
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        // Then
+        assertThat(ShadowDialog.getLatestDialog().isShowing).isTrue()
+        onView(withText(R.string.title_dialog_file_detail))
+            .inRoot(isDialog())
+            .check(matches(isDisplayed()))
+        onView(withText(ApplicationProvider.getApplicationContext<Context>()
+            .getString(R.string.file_detail,file.name,file.path,file.size)))
+            .inRoot(isDialog())
+            .check(matches(isDisplayed()))
+        onView(withText(R.string.button_dialog_positive))
+            .inRoot(isDialog())
+            .check(matches(isDisplayed()))
     }
 }

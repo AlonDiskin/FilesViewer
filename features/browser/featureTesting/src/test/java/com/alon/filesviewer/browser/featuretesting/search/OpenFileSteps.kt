@@ -1,10 +1,14 @@
 package com.alon.filesviewer.browser.featuretesting.search
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.os.Looper
 import android.webkit.MimeTypeMap
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
@@ -43,6 +47,19 @@ class OpenFileSteps(private val mediaContentProvider: FakeMediaContentProvider) 
     init {
         mockkStatic(Environment::class)
         mockkStatic(FileProvider::class)
+
+        // Stub storage permission as granted
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            every { Environment.isExternalStorageManager() } returns true
+        } else {
+            mockkStatic(ContextCompat::class)
+            every {
+                ContextCompat.checkSelfPermission(
+                    any(), // activity context not yet available
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                )
+            } returns PackageManager.PERMISSION_GRANTED
+        }
     }
 
     @Given("^user has an \"([^\"]*)\" file on device$")

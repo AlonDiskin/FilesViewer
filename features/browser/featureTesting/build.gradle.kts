@@ -69,12 +69,13 @@ dependencies {
     testImplementation(libs.hilt)
     testImplementation(libs.hiltTest)
     kaptTest(libs.hiltCompiler)
-    testImplementation("com.mauriciotogneri:greencoffee:3.5.0")
+    testImplementation(libs.greenCoffee)
     testImplementation("io.reactivex.rxjava2:rxjava:2.2.19")
     testImplementation("io.reactivex.rxjava2:rxkotlin:2.4.0")
     testImplementation("androidx.room:room-runtime:2.6.1")
     kaptTest("androidx.room:room-compiler:2.6.1")
     testImplementation("androidx.room:room-testing:2.6.1")
+    testImplementation("commons-io:commons-io:2.16.1")
 }
 
 kapt {
