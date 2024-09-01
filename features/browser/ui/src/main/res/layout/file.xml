@@ -30,9 +30,9 @@
             android:id="@+id/fileIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginBottom="18dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -44,6 +44,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:maxLines="1"
             android:ellipsize="end"
             android:text="@{file.name}"
             android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
@@ -66,15 +67,6 @@
             android:onClick="@{(v) -> menuClickListener.invoke(file,v)}"
             app:layout_constraintTop_toTopOf="@+id/fileIcon"
             app:srcCompat="@drawable/round_more_vert_24" />
-
-        <!--    <View-->
-        <!--        android:layout_width="0dp"-->
-        <!--        android:layout_height="0.3dp"-->
-        <!--        app:layout_constraintEnd_toEndOf="@+id/fileDetail"-->
-        <!--        android:background="@color/black"-->
-        <!--        android:layout_marginTop="5dp"-->
-        <!--        app:layout_constraintStart_toStartOf="@+id/fileLastModified"-->
-        <!--        app:layout_constraintTop_toBottomOf="@+id/fileIcon" />-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

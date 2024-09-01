@@ -1,8 +1,7 @@
 package com.alon.filesviewer.journey
 
-import android.Manifest
 import androidx.test.filters.LargeTest
-import androidx.test.rule.GrantPermissionRule
+import com.alon.filesviewer.util.GrantManageStoragePermissionRule
 import com.mauriciotogneri.greencoffee.GreenCoffeeConfig
 import com.mauriciotogneri.greencoffee.GreenCoffeeTest
 import com.mauriciotogneri.greencoffee.ScenarioConfig
@@ -32,10 +31,7 @@ class SearchImageJourneyRunner(scenario: ScenarioConfig) :  GreenCoffeeTest(scen
     val hiltRule = HiltAndroidRule(this)
 
     @get:Rule
-    val permissionRule = GrantPermissionRule.grant(
-        Manifest.permission.READ_EXTERNAL_STORAGE,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE
-    )!!
+    val permissionRule = GrantManageStoragePermissionRule()
 
     @Test
     fun test() {
