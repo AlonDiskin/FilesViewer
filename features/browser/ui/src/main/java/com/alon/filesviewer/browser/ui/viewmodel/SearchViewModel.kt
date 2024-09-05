@@ -19,7 +19,6 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val searchDevice: SearchDeviceFilesUseCase,
-    private val filesMapper: FileUiStateMapper,
     private val savedState: SavedStateHandle
 ) : RxViewModel() {
 
@@ -89,7 +88,7 @@ class SearchViewModel @Inject constructor(
         when {
             update.isSuccess -> {
                 _searchUiState.value!!.let { state ->
-                    val searchResults = update.getOrNull()!!.map { filesMapper.map(it) }
+                    val searchResults = update.getOrNull()!!
                     _searchUiState.value = state.copy(results = searchResults)
                 }
             }

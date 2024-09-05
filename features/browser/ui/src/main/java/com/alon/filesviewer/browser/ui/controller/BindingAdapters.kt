@@ -2,12 +2,12 @@ package com.alon.filesviewer.browser.ui.controller
 
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
+import com.alon.filesviewer.browser.domain.model.DeviceFile
 import com.alon.filesviewer.browser.domain.model.DeviceFileType
 import com.alon.filesviewer.browser.ui.R
-import com.alon.filesviewer.browser.ui.data.FileUiState
 
 @BindingAdapter("setFileIcon")
-fun setFileIcon(imageView: ImageView, file: FileUiState) {
+fun setFileIcon(imageView: ImageView, file: DeviceFile) {
     when(file.type) {
         DeviceFileType.TEXT -> imageView.setImageResource(R.drawable.baseline_text_snippet_24)
         DeviceFileType.IMAGE -> imageView.setImageResource(R.drawable.round_photo_24)

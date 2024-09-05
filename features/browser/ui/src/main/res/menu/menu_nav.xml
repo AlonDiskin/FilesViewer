@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_all"
+        android:enabled="true"
+        android:title="Files"
+        android:icon="@drawable/folder_24"
+        />
+
+    <item
+        android:id="@+id/nav_image"
+        android:enabled="true"
+        android:title="Images"
+        android:icon="@drawable/image_24"
+        />
+
+    <item
+        android:id="@+id/nav_video"
+        android:enabled="true"
+        android:title="Videos"
+        android:icon="@drawable/play_circle_24"
+        />
+
+    <item
+        android:id="@+id/nav_audio"
+        android:enabled="true"
+        android:title="Audio"
+        android:icon="@drawable/outline_audio_file_24"
+        />
+
+    <item
+        android:id="@+id/nav_download"
+        android:enabled="true"
+        android:title="Downloads"
+        android:icon="@drawable/download_24"
+        />
+
+</menu>

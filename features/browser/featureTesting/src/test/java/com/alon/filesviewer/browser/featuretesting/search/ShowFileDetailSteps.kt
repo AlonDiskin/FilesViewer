@@ -20,8 +20,8 @@ import androidx.test.espresso.matcher.RootMatchers.isPlatformPopup
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import com.alon.filesviewer.browser.featuretesting.util.FakeMediaContentProvider
-import com.alon.filesviewer.browser.featuretesting.util.TestMediaFile
+import com.alon.filesviewer.browser.featuretesting.util.FakeAudioFile
+import com.alon.filesviewer.browser.featuretesting.util.FakeMediaStoreContentProvider
 import com.alon.filesviewer.browser.ui.R
 import com.alon.filesviewer.browser.ui.controller.SearchActivity
 import com.mauriciotogneri.greencoffee.GreenCoffeeSteps
@@ -37,7 +37,7 @@ import org.junit.rules.TemporaryFolder
 import org.robolectric.Shadows
 import java.io.File
 
-class ShowFileDetailSteps(private val mediaContentProvider: FakeMediaContentProvider) :GreenCoffeeSteps() {
+class ShowFileDetailSteps(private val mediaContentProvider: FakeMediaStoreContentProvider) :GreenCoffeeSteps() {
 
     private lateinit var scenario: ActivityScenario<SearchActivity>
     private val query = "meta"
@@ -71,8 +71,15 @@ class ShowFileDetailSteps(private val mediaContentProvider: FakeMediaContentProv
 
         audioFile = rootDir.newFile("metallica.mp3")
 
-        mediaContentProvider.addTestMediaFiles(
-            TestMediaFile(audioFile.path,audioFile.name,FakeMediaContentProvider.AUDIO_FILE)
+        mediaContentProvider.addFakeAudioFiles(
+            listOf(
+                FakeAudioFile(
+                        audioFile.path,
+                        audioFile.name,
+                        audioFile.length(),
+                        audioFile.lastModified()
+                        )
+            )
         )
         every { Environment.getExternalStorageDirectory() } returns rootMockFile
         every { rootMockFile.path } returns rootDir.root.path
@@ -96,6 +103,7 @@ class ShowFileDetailSteps(private val mediaContentProvider: FakeMediaContentProv
 
     @And("^select to view its detail info$")
     fun userSelectViewDetail() {
+        Thread.sleep(3000)
         onView(withId(R.id.fileDetail))
             .perform(click())
         Shadows.shadowOf(Looper.getMainLooper()).idle()

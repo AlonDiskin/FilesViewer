@@ -4,20 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="com.alon.filesviewer.browser.ui.data.FileUiState"/>
+        <import type="com.alon.filesviewer.browser.domain.model.DeviceFile"/>
         <import type="kotlin.jvm.functions.Function1"/>
         <import type="kotlin.jvm.functions.Function2"/>
         <import type="android.view.View"/>
         <import type="kotlin.Unit"/>
         <variable
             name="file"
-            type="FileUiState" />
+            type="DeviceFile" />
         <variable
             name="clickListener"
-            type="Function1&lt;FileUiState,Unit>" />
+            type="Function1&lt;DeviceFile,Unit>" />
         <variable
             name="menuClickListener"
-            type="Function2&lt;FileUiState,View,Unit>" />
+            type="Function2&lt;DeviceFile,View,Unit>" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

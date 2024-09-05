@@ -63,6 +63,9 @@ dependencies {
     testImplementation(libs.googleTruth)
     testImplementation(libs.junitParams)
     testImplementation(libs.roboLectric)
+    testImplementation("androidx.room:room-runtime:2.6.1")
+    kaptTest("androidx.room:room-compiler:2.6.1")
+    testImplementation("androidx.room:room-testing:2.6.1")
 }
 
 kapt {

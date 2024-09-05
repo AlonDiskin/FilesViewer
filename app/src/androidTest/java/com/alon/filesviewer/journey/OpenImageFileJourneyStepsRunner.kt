@@ -15,14 +15,14 @@ import org.junit.runners.Parameterized
 @HiltAndroidTest
 @RunWith(Parameterized::class)
 @LargeTest
-class SearchImageJourneyRunner(scenario: ScenarioConfig) :  GreenCoffeeTest(scenario) {
+class OpenImageFileJourneyStepsRunner(scenario: ScenarioConfig) :  GreenCoffeeTest(scenario) {
 
     companion object {
         @JvmStatic
         @Parameterized.Parameters(name = "{0}")
         fun scenarios(): Iterable<ScenarioConfig> {
             return GreenCoffeeConfig()
-                .withFeatureFromAssets("assets/feature/search_image.feature")
+                .withFeatureFromAssets("assets/feature/open_image.feature")
                 .scenarios()
         }
     }
@@ -35,6 +35,6 @@ class SearchImageJourneyRunner(scenario: ScenarioConfig) :  GreenCoffeeTest(scen
 
     @Test
     fun test() {
-        start(SearchImageJourneySteps())
+        start(OpenImageFileJourneySteps())
     }
 }

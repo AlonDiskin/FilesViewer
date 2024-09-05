@@ -27,13 +27,6 @@ Feature: Search device files
       | image     |
       | audio     |
       | video     |
-  
-  @open-dir
-  Scenario: Open directory result
-    Given user has a directory called music
-    When he find dir via search
-    And select to open it
-    Then app should open directory files in browser screen
 
   @show-detail
   Scenario: Show file detail

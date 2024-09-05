@@ -1,13 +1,15 @@
 package com.alon.filesviewer.browser.featuretesting.search
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.alon.filesviewer.browser.featuretesting.util.FakeMediaContentProvider
+import com.alon.filesviewer.browser.featuretesting.di.ErrorTestDataModule
+import com.alon.filesviewer.browser.featuretesting.util.FakeMediaStoreContentProvider
 import com.mauriciotogneri.greencoffee.GreenCoffeeConfig
 import com.mauriciotogneri.greencoffee.GreenCoffeeTest
 import com.mauriciotogneri.greencoffee.ScenarioConfig
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
+import dagger.hilt.android.testing.UninstallModules
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
 import org.junit.BeforeClass
@@ -20,6 +22,7 @@ import org.robolectric.annotation.LooperMode
 import javax.inject.Inject
 
 @HiltAndroidTest
+@UninstallModules(ErrorTestDataModule::class)
 @RunWith(ParameterizedRobolectricTestRunner::class)
 @LooperMode(LooperMode.Mode.PAUSED)
 @Config(application = HiltTestApplication::class)
@@ -57,7 +60,7 @@ class ShowFileDetailStepsRunner(scenario: ScenarioConfig) : GreenCoffeeTest(scen
     var hiltRule = HiltAndroidRule(this)
 
     @Inject
-    lateinit var mediaContentProvider: FakeMediaContentProvider
+    lateinit var mediaContentProvider: FakeMediaStoreContentProvider
 
     @Test
     fun test() {
