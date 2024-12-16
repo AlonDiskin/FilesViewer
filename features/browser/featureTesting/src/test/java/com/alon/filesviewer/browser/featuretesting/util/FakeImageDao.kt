@@ -5,11 +5,11 @@ import androidx.room.Insert
 import androidx.room.Query
 
 @Dao
-interface TestMediaFileDao {
+interface FakeImageDao {
 
     @Insert
-    fun insert(file: TestMediaFile)
+    fun insert(file: FakeImageFile)
 
-    @Query("SELECT * FROM testmediafile")
-    fun getAll(): List<TestMediaFile>
+    @Query("SELECT * FROM fakeimagefile")
+    fun getAll(): List<FakeImageFile>
 }

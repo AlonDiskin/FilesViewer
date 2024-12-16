@@ -18,6 +18,17 @@ object RxLocalStorage {
             .subscribeOn(Schedulers.io())
     }
 
+    fun <R: Any> folderObservable(path: String,fetch: () -> (R)): Observable<R> {
+        return Observable.create { emitter ->
+            val folderObserver = DeviceFolderObserver(path) { emitter.onNext(fetch.invoke()) }
+
+            folderObserver.startObserving()
+            emitter.onNext(fetch.invoke())
+            emitter.setCancellable { folderObserver.stopObserving() }
+        }
+            .subscribeOn(Schedulers.io())
+    }
+
     fun <R: Any> mediaObservable(fetch: () -> (R),
                         contentResolver: ContentResolver,
                         contentUri: Uri

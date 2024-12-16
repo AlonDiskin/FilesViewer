@@ -16,13 +16,14 @@ import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.*
 import androidx.test.espresso.contrib.RecyclerViewActions.*
 import androidx.test.espresso.matcher.ViewMatchers.*
-import com.alon.filesviewer.browser.featuretesting.util.FakeMediaContentProvider
-import com.alon.filesviewer.browser.featuretesting.util.TestMediaFile
+import com.alon.filesviewer.browser.featuretesting.util.FakeAudioFile
+import com.alon.filesviewer.browser.featuretesting.util.FakeImageFile
+import com.alon.filesviewer.browser.featuretesting.util.FakeMediaStoreContentProvider
 import com.alon.filesviewer.browser.featuretesting.util.RecyclerViewMatcher.withRecyclerView
 import com.alon.filesviewer.browser.featuretesting.util.withRecyclerViewSize
 import com.alon.filesviewer.browser.ui.R
+import com.alon.filesviewer.browser.ui.controller.FilesAdapter
 import com.alon.filesviewer.browser.ui.controller.SearchActivity
-import com.alon.filesviewer.browser.ui.controller.SearchResultsAdapter.*
 import com.mauriciotogneri.greencoffee.GreenCoffeeSteps
 import com.mauriciotogneri.greencoffee.annotations.And
 import com.mauriciotogneri.greencoffee.annotations.Given
@@ -36,7 +37,7 @@ import org.junit.rules.TemporaryFolder
 import org.robolectric.Shadows
 import java.io.File
 
-class DeviceFilesSearchSteps(private val mediaContentProvider: FakeMediaContentProvider) :GreenCoffeeSteps() {
+class DeviceFilesSearchSteps(private val mediaContentProvider: FakeMediaStoreContentProvider) :GreenCoffeeSteps() {
 
     private lateinit var scenario: ActivityScenario<SearchActivity>
 
@@ -137,12 +138,13 @@ class DeviceFilesSearchSteps(private val mediaContentProvider: FakeMediaContentP
                     expectedUiSearchResults.sortDescending()
                 }
 
+                Thread.sleep(3000)
                 onView(withId(R.id.searchResults))
                     .check(matches(withRecyclerViewSize(expectedUiSearchResults.size)))
                 expectedUiSearchResults.forEachIndexed { index, result ->
                     onView(withId(R.id.searchResults))
                         .perform(
-                            scrollToPosition<FileViewHolder>(
+                            scrollToPosition<FilesAdapter.FileViewHolder>(
                                 index
                             )
                         )
@@ -166,16 +168,19 @@ class DeviceFilesSearchSteps(private val mediaContentProvider: FakeMediaContentP
     }
 
     private fun addFileToFakeMediaStore(file: File) {
-        val format = file.name.split(".")[1]
-        when(format) {
+        when(val format = file.name.split(".")[1]) {
             "png" -> {
-                mediaContentProvider.addTestMediaFiles(
-                    TestMediaFile(file.path,file.name, FakeMediaContentProvider.IMAGE_FILE)
+                mediaContentProvider.addFakeImageFiles(
+                    listOf(
+                        FakeImageFile(file.path,file.name,file.length(),file.lastModified())
+                    )
                 )
             }
             "mp3" -> {
-                mediaContentProvider.addTestMediaFiles(
-                    TestMediaFile(file.path,file.name, FakeMediaContentProvider.AUDIO_FILE)
+                mediaContentProvider.addFakeAudioFiles(
+                    listOf(
+                        FakeAudioFile(file.path,file.name,file.length(),file.lastModified())
+                    )
                 )
             }
             else -> {

@@ -1,12 +1,14 @@
-package com.alon.filesviewer.browser.featuretesting.search
+package com.alon.filesviewer.browser.featuretesting.browser
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.alon.filesviewer.browser.featuretesting.di.ErrorTestDataModule
 import com.mauriciotogneri.greencoffee.GreenCoffeeConfig
 import com.mauriciotogneri.greencoffee.GreenCoffeeTest
 import com.mauriciotogneri.greencoffee.ScenarioConfig
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
+import dagger.hilt.android.testing.UninstallModules
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
 import org.junit.BeforeClass
@@ -18,10 +20,11 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.LooperMode
 
 @HiltAndroidTest
+@UninstallModules(ErrorTestDataModule::class)
 @RunWith(ParameterizedRobolectricTestRunner::class)
 @LooperMode(LooperMode.Mode.PAUSED)
 @Config(application = HiltTestApplication::class)
-class OpenDirStepsRunner(scenario: ScenarioConfig) : GreenCoffeeTest(scenario) {
+class BrowserNavigationStepsRunner(scenario: ScenarioConfig) : GreenCoffeeTest(scenario) {
 
     companion object {
         @JvmStatic
@@ -29,8 +32,8 @@ class OpenDirStepsRunner(scenario: ScenarioConfig) : GreenCoffeeTest(scenario) {
         fun data(): Collection<Array<Any>> {
             val res = ArrayList<Array<Any>>()
             val scenarioConfigs = GreenCoffeeConfig()
-                .withFeatureFromAssets("feature/search_files.feature")
-                .withTags("@open-dir")
+                .withFeatureFromAssets("feature/browse_files.feature")
+                .withTags("@browser-nav")
                 .scenarios()
 
             for (scenarioConfig in scenarioConfigs) {
@@ -47,8 +50,7 @@ class OpenDirStepsRunner(scenario: ScenarioConfig) : GreenCoffeeTest(scenario) {
         }
     }
 
-    @JvmField
-    @Rule
+    @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @get:Rule
@@ -57,6 +59,6 @@ class OpenDirStepsRunner(scenario: ScenarioConfig) : GreenCoffeeTest(scenario) {
     @Test
     fun test() {
         hiltRule.inject()
-        start(OpenDirSteps())
+        start(BrowserNavigationSteps())
     }
 }

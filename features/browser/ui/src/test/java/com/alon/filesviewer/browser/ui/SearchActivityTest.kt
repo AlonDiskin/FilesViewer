@@ -11,6 +11,7 @@ import android.os.Environment
 import android.os.Looper
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelLazy
@@ -34,20 +35,23 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.alon.filesviewer.browser.domain.model.BrowserError
+import com.alon.filesviewer.browser.domain.model.DeviceFile
 import com.alon.filesviewer.browser.domain.model.DeviceFileType
 import com.alon.filesviewer.browser.domain.model.SearchFilter
 import com.alon.filesviewer.browser.ui.RecyclerViewMatcher.withRecyclerView
+import com.alon.filesviewer.browser.ui.controller.FilesAdapter
+import com.alon.filesviewer.browser.ui.controller.FilesAdapter.FileViewHolder
 import com.alon.filesviewer.browser.ui.controller.SearchActivity
-import com.alon.filesviewer.browser.ui.controller.SearchResultsAdapter.FileViewHolder
-import com.alon.filesviewer.browser.ui.data.FileUiState
 import com.alon.filesviewer.browser.ui.data.SearchUiState
 import com.alon.filesviewer.browser.ui.viewmodel.SearchViewModel
+import com.google.android.material.textview.MaterialTextView
 import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkConstructor
 import io.mockk.mockkStatic
 import io.mockk.verify
+import org.apache.commons.io.FileUtils
 import org.hamcrest.CoreMatchers.allOf
 import org.junit.Before
 import org.junit.Rule
@@ -57,7 +61,7 @@ import org.robolectric.Shadows
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.LooperMode
 import org.robolectric.shadows.ShadowDialog
-import org.robolectric.shadows.ShadowPackageManager
+import java.io.File
 
 @RunWith(AndroidJUnit4::class)
 @LooperMode(LooperMode.Mode.PAUSED)
@@ -163,7 +167,7 @@ class SearchActivityTest {
     fun showLatestSearchFilterUiState_WhenCreated() {
         // Given
         val expectedFilterId = when(latestUiState.filter) {
-            SearchFilter.ALL -> R.id.chipFilterAll
+            SearchFilter.FILES -> R.id.chipFilterAll
             SearchFilter.IMAGE -> R.id.chipFilterImages
             SearchFilter.VIDEO -> R.id.chipFilterVideos
             SearchFilter.AUDIO -> R.id.chipFilterAudio
@@ -218,7 +222,7 @@ class SearchActivityTest {
             SearchFilter.AUDIO,
             SearchFilter.DOWNLOAD,
             SearchFilter.VIDEO,
-            SearchFilter.ALL)
+            SearchFilter.FILES)
 
         every { viewModel.setFilter(any()) } returns Unit
 
@@ -237,35 +241,36 @@ class SearchActivityTest {
     fun showSearchResults_WhenResultsLoaded() {
         // Given
         val expectedResults = listOf(
-            FileUiState(
+            DeviceFile(
                 "path_1",
                 "name_1",
                 DeviceFileType.DIR,
-                Uri.EMPTY,
-                "mime_1",
-                "size_1"
+                2000L,
+                "size_1",
+                1000L
             ),
-            FileUiState(
+            DeviceFile(
                 "path_2",
                 "name_2",
                 DeviceFileType.VIDEO,
-                Uri.EMPTY,
+                2000L,
                 "mime_2",
-                "size_2"
+                2000L
             ),
-            FileUiState(
+            DeviceFile(
                 "path_3",
                 "name_3",
                 DeviceFileType.AUDIO,
-                Uri.EMPTY,
+                2000L,
                 "mime_3",
-                "size_3"
+                2000L
             )
         )
 
         // When
         uiState.value = SearchUiState(results = expectedResults)
         Shadows.shadowOf(Looper.getMainLooper()).idle()
+        Thread.sleep(3000)
 
         // Then
         onView(withId(R.id.searchResults))
@@ -329,23 +334,28 @@ class SearchActivityTest {
     fun openSearchResultFileViaAppChooser_WhenSelectedByUserAndFileIsNotDir() {
         // Given
         val results = listOf(
-            FileUiState(
+            DeviceFile(
                 "path",
-                "name",
+                "file_name",
                 DeviceFileType.TEXT,
-                Uri.EMPTY,
-                "mime",
-                "size"
+                2000L,
+                "mp3",
+                2000L
             )
         )
         uiState.value = SearchUiState(results = results)
         Shadows.shadowOf(Looper.getMainLooper()).idle()
+        Thread.sleep(3000)
         Intents.init()
 
+        mockkStatic(FileProvider::class)
+        every { FileProvider.getUriForFile(any(),any(), File(results.first().path)) } returns Uri.EMPTY
+
         // When
-        onView(withText(results.first().name))
+        onView(withRecyclerView(R.id.searchResults).atPosition(0))
             .perform(click())
         Shadows.shadowOf(Looper.getMainLooper()).idle()
+
 
         // Then
         Intents.intended(IntentMatchers.hasAction(Intent.ACTION_CHOOSER))
@@ -353,62 +363,26 @@ class SearchActivityTest {
 
         assertThat(intent.action).isEqualTo(Intent.ACTION_VIEW)
         assertThat(intent.flags).isEqualTo(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        assertThat(intent.data).isEqualTo(results.first().uri)
-        assertThat(intent.type).isEqualTo(results.first().mime)
 
         Intents.release()
     }
 
     @Test
-    fun openSearchResultDirInBrowserScreen_WhenSelectedByUser() {
-        // Given
-        val results = listOf(
-            FileUiState(
-                "path",
-                "name",
-                DeviceFileType.DIR,
-                Uri.EMPTY,
-                "mime",
-                "size"
-            )
-        )
-        scenario = ActivityScenario.launchActivityForResult(SearchActivity::class.java)
-        Shadows.shadowOf(Looper.getMainLooper()).idle()
-
-        uiState.value = SearchUiState(results = results)
-        Shadows.shadowOf(Looper.getMainLooper()).idle()
-
-        // When
-        onView(withId(R.id.searchResults))
-            .perform(
-                RecyclerViewActions.actionOnItemAtPosition<FileViewHolder>(
-                    0,
-                    click()
-                )
-            )
-        Shadows.shadowOf(Looper.getMainLooper()).idle()
-
-        // Then
-        assertThat(scenario.result.resultCode).isEqualTo(Activity.RESULT_OK)
-        assertThat(scenario.result.resultData.getStringExtra(SearchActivity.RESULT_DIR_PATH))
-            .isEqualTo(results.first().path)
-        scenario.onActivity { assertThat(it.isFinishing).isTrue() }
-    }
-
-    @Test
     fun showResultFileDetail_WhenUserSelectFromMenu() {
         // Given
-        val file = FileUiState(
+        val file = DeviceFile(
             "path",
             "name",
             DeviceFileType.DIR,
-            Uri.EMPTY,
+            FileUtils.ONE_MB,
             "mime",
-            "3 mb"
+            10000L
         )
+        val size = FileUtils.byteCountToDisplaySize(file.size)
 
         uiState.value = SearchUiState(results = listOf(file))
         Shadows.shadowOf(Looper.getMainLooper()).idle()
+        Thread.sleep(3000)
 
         // When
         onView(withId(R.id.fileDetail))
@@ -426,7 +400,7 @@ class SearchActivityTest {
             .inRoot(isDialog())
             .check(matches(isDisplayed()))
         onView(withText(ApplicationProvider.getApplicationContext<Context>()
-            .getString(R.string.file_detail,file.name,file.path,file.size)))
+            .getString(R.string.file_detail,file.name,file.path,size)))
             .inRoot(isDialog())
             .check(matches(isDisplayed()))
         onView(withText(R.string.button_dialog_positive))

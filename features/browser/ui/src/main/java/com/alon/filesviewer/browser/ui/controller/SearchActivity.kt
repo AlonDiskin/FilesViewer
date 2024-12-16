@@ -10,34 +10,34 @@ import android.os.Environment
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.webkit.MimeTypeMap
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.databinding.DataBindingUtil
 import com.alon.filesviewer.browser.domain.model.BrowserError
+import com.alon.filesviewer.browser.domain.model.DeviceFile
 import com.alon.filesviewer.browser.domain.model.DeviceFileType
 import com.alon.filesviewer.browser.domain.model.SearchFilter
 import com.alon.filesviewer.browser.ui.R
-import com.alon.filesviewer.browser.ui.data.FileUiState
 import com.alon.filesviewer.browser.ui.databinding.ActivitySearchBinding
 import com.alon.filesviewer.browser.ui.viewmodel.SearchViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.migration.OptionalInject
+import org.apache.commons.io.FileUtils
+import java.io.File
 
 @AndroidEntryPoint
 @OptionalInject
 class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
-
-    companion object {
-        const val RESULT_DIR_PATH = "dir path"
-    }
 
     private lateinit var layout: ActivitySearchBinding
     private val viewModel: SearchViewModel by viewModels()
@@ -60,13 +60,13 @@ class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener, Menu
         setSupportActionBar(layout.toolbar)
 
         // Set search results recycler view
-        val adapter = SearchResultsAdapter(::onResultClick,::onResultMenuClick)
+        val adapter = FilesAdapter(::onResultClick,::onResultMenuClick)
         layout.searchResults.adapter = adapter
 
         // Set search filters chip group listener
         viewModel.searchUiState.value!!.filter.let { filter ->
             val checkId = when(filter) {
-                SearchFilter.ALL -> R.id.chipFilterAll
+                SearchFilter.FILES -> R.id.chipFilterAll
                 SearchFilter.IMAGE -> R.id.chipFilterImages
                 SearchFilter.VIDEO -> R.id.chipFilterVideos
                 SearchFilter.AUDIO -> R.id.chipFilterAudio
@@ -76,7 +76,7 @@ class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener, Menu
         }
         layout.chipGroup.setOnCheckedStateChangeListener { chipGroup, checkedIds ->
             when(chipGroup.checkedChipId) {
-                R.id.chipFilterAll -> viewModel.setFilter(SearchFilter.ALL)
+                R.id.chipFilterAll -> viewModel.setFilter(SearchFilter.FILES)
                 R.id.chipFilterImages -> viewModel.setFilter(SearchFilter.IMAGE)
                 R.id.chipFilterVideos -> viewModel.setFilter(SearchFilter.VIDEO)
                 R.id.chipFilterAudio -> viewModel.setFilter(SearchFilter.AUDIO)
@@ -145,33 +145,42 @@ class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener, Menu
                        }
                        snackbar.show()
                    }
+
+                   else -> {
+                        // TODO
+                   }
                }
         }
     }
 
-    private fun onResultClick(file: FileUiState) {
+    private fun onResultClick(file: DeviceFile) {
         // Open selected file
         openFile(file)
     }
 
-    private fun openFile(file: FileUiState) {
+    private fun openFile(file: DeviceFile) {
         // If file is not a dir, open via device app chooser, else
         // open dir files ion browser activity via activity result
         if (file.type != DeviceFileType.DIR) {
+            val uri = FileProvider.getUriForFile(
+                applicationContext,
+                applicationContext.packageName.plus(".provider"),
+                File(file.path)
+            )
+            val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.format)
             val intent = Intent(Intent.ACTION_VIEW).apply {
-                setDataAndType(file.uri,file.mime)
+                setDataAndType(uri,mime)
                 setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
             val chooser = Intent.createChooser(intent, getString(R.string.title_app_chooser))
 
             startActivity(chooser)
         } else {
-            setResult(Activity.RESULT_OK,Intent().apply { putExtra(RESULT_DIR_PATH,file.path) })
-            finish()
+            // TODO
         }
     }
 
-    private fun onResultMenuClick(file: FileUiState,view: View) {
+    private fun onResultMenuClick(file: DeviceFile,view: View) {
         PopupMenu(this, view).apply {
             setOnMenuItemClickListener { item ->
                 when (item.itemId) {
@@ -188,10 +197,15 @@ class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener, Menu
         }
     }
 
-    private fun showFileDetail(file: FileUiState) {
+    private fun showFileDetail(file: DeviceFile) {
         MaterialAlertDialogBuilder(this)
             .setTitle(getString(R.string.title_dialog_file_detail))
-            .setMessage(getString(R.string.file_detail,file.name,file.path,file.size))
+            .setMessage(
+                getString(R.string.file_detail,
+                    file.name,
+                    file.path,
+                    FileUtils.byteCountToDisplaySize(file.size))
+            )
             .setPositiveButton(getString(R.string.button_dialog_positive)) { dialog, which -> dialog.dismiss() }
             .show()
     }

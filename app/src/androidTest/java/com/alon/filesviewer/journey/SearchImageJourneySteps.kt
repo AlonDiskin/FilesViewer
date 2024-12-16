@@ -11,7 +11,7 @@ import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import com.alon.filesviewer.browser.ui.controller.SearchResultsAdapter.FileViewHolder
+import com.alon.filesviewer.browser.ui.controller.FilesAdapter
 import com.alon.filesviewer.util.DeviceUtil
 import com.google.android.material.R
 import com.google.common.truth.Truth.assertThat
@@ -56,7 +56,7 @@ class SearchImageJourneySteps: GreenCoffeeSteps() {
         Intents.init()
         onView(withId(com.alon.filesviewer.browser.ui.R.id.searchResults))
             .perform(
-                actionOnItemAtPosition<FileViewHolder>(
+                actionOnItemAtPosition<FilesAdapter.FileViewHolder>(
                     0,
                     click()
                 )

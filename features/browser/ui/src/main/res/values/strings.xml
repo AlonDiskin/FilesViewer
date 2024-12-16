@@ -19,4 +19,16 @@
     <string name="button_dialog_positive">OK</string>
     <string name="title_action_nav_search">Search</string>
     <string name="title_app_name">FilesViewer</string>
+    <string name="title_dialog_exit_app">Exit app</string>
+    <string name="message_dialog_exit_app">Are you sure you want to exit app?</string>
+    <string name="button_dialog_negative">CANCEL</string>
+    <string name="path_root_device_home">/Home</string>
+    <string name="path_root_device_downloads">/Home/Download</string>
+    <string name="path_root_device_videos">/Video</string>
+    <string name="path_root_device_images">/Image</string>
+    <string name="path_root_device_audios">/Audio</string>
+    <string name="error_message_dir_non_exist">The directory in this location has been moved or deleted!</string>
+    <string name="error_message_access_denied">Access to this directory has been restricted by android</string>
+    <string name="error_message_browser_feature">Browser feature error! our team will fix it soon!</string>
+    <string name="title_dialog_error">File Error</string>
 </resources>

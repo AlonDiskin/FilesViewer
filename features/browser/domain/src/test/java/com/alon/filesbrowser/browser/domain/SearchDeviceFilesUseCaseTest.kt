@@ -30,7 +30,7 @@ class SearchDeviceFilesUseCaseTest {
     fun searchDeviceFiles_WhenExecuted() {
         // Given
         val searchResults: Observable<Result<List<DeviceFile>>> = mockk()
-        val searchRequest = SearchRequest("query",SearchFilter.ALL)
+        val searchRequest = SearchRequest("query",SearchFilter.FILES)
 
         every { deviceRepo.search(any(),any()) } returns searchResults
 

@@ -9,9 +9,7 @@ import com.alon.filesviewer.browser.domain.model.SearchFilter
 import com.alon.filesviewer.browser.domain.model.SearchRequest
 import com.alon.filesviewer.browser.domain.usecase.SearchDeviceFilesUseCase
 import com.alon.filesviewer.browser.ui.viewmodel.SearchViewModel.*
-import com.alon.filesviewer.browser.ui.data.FileUiState
 import com.alon.filesviewer.browser.ui.data.SearchUiState
-import com.alon.filesviewer.browser.ui.viewmodel.FileUiStateMapper
 import com.alon.filesviewer.browser.ui.viewmodel.SearchViewModel
 import com.google.common.truth.Truth.*
 import io.mockk.every
@@ -47,7 +45,6 @@ class SearchViewModelTest {
 
     // Collaborators
     private val searchUseCase: SearchDeviceFilesUseCase = mockk()
-    private val filesMapper: FileUiStateMapper = mockk()
     private val savedState = SavedStateHandle()
 
     // Stub data
@@ -57,7 +54,7 @@ class SearchViewModelTest {
     fun setUp() {
         every { searchUseCase.execute(any()) } returns searchSubject
 
-        viewModel = SearchViewModel(searchUseCase,filesMapper,savedState)
+        viewModel = SearchViewModel(searchUseCase,savedState)
     }
 
     @Test
@@ -77,7 +74,7 @@ class SearchViewModelTest {
         savedState[SearchViewModel.SAVED_STATE] = state
 
         // When
-        viewModel = SearchViewModel(searchUseCase,filesMapper,savedState)
+        viewModel = SearchViewModel(searchUseCase,savedState)
 
         // Then
         assertThat(viewModel.searchUiState.value!!.query).isEqualTo(state.query)
@@ -142,14 +139,10 @@ class SearchViewModelTest {
     fun updateUiState_WhenModelUpdateDeviceFilesSearchResults() {
         // Given
         val query = "query"
-        val modelFile = mockk<DeviceFile>()
-        val modelFiles = listOf(modelFile)
-        val mappedFile = mockk<FileUiState>()
-        val mappedFiles = listOf(mappedFile)
-        val searchResult = Result.success(modelFiles)
-        val expectedUiState = SearchUiState(query = query, results = mappedFiles)
+        val files = mockk<List<DeviceFile>>()
+        val searchResult = Result.success(files)
+        val expectedUiState = SearchUiState(query = query, results = files)
 
-        every { filesMapper.map(modelFile) } returns mappedFile
         viewModel.setQuery(query)
 
         // When

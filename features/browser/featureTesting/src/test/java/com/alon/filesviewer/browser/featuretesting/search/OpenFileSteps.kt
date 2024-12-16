@@ -18,11 +18,13 @@ import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import com.alon.filesviewer.browser.featuretesting.util.FakeMediaContentProvider
-import com.alon.filesviewer.browser.featuretesting.util.TestMediaFile
+import com.alon.filesviewer.browser.featuretesting.util.FakeAudioFile
+import com.alon.filesviewer.browser.featuretesting.util.FakeImageFile
+import com.alon.filesviewer.browser.featuretesting.util.FakeMediaStoreContentProvider
+import com.alon.filesviewer.browser.featuretesting.util.FakeVideoFile
 import com.alon.filesviewer.browser.ui.R
+import com.alon.filesviewer.browser.ui.controller.FilesAdapter
 import com.alon.filesviewer.browser.ui.controller.SearchActivity
-import com.alon.filesviewer.browser.ui.controller.SearchResultsAdapter.FileViewHolder
 import com.google.common.truth.Truth.assertThat
 import com.mauriciotogneri.greencoffee.GreenCoffeeSteps
 import com.mauriciotogneri.greencoffee.annotations.And
@@ -35,8 +37,9 @@ import io.mockk.mockkStatic
 import org.junit.rules.TemporaryFolder
 import org.robolectric.Shadows
 import java.io.File
+import java.nio.file.Path
 
-class OpenFileSteps(private val mediaContentProvider: FakeMediaContentProvider) :GreenCoffeeSteps() {
+class OpenFileSteps(private val mediaContentProvider: FakeMediaStoreContentProvider) :GreenCoffeeSteps() {
 
     private lateinit var scenario: ActivityScenario<SearchActivity>
     private var searchFilterId: Int = -1
@@ -69,37 +72,60 @@ class OpenFileSteps(private val mediaContentProvider: FakeMediaContentProvider) 
         val rootDir = TemporaryFolder()
         val name: String
         val path: String
-        val type: Int
 
         rootDir.create()
         when(file) {
             "image" -> {
                 name = "mona_liza.png"
                 path = rootDir.newFile(name).path
-                type = FakeMediaContentProvider.IMAGE_FILE
                 searchFilterId = R.id.chipFilterImages
                 query = "mo"
                 expectedMime = "image/*"
+
+                mediaContentProvider.addFakeImageFiles(
+                    listOf(
+                        FakeImageFile(
+                            path,name,File(path).length(),File(path).lastModified()
+                        )
+                    )
+                )
+
                 Shadows.shadowOf(MimeTypeMap.getSingleton())
                     .addExtensionMimeTypeMapping("png",expectedMime)
             }
             "audio" -> {
                 name = "mozart.mp3"
                 path = rootDir.newFile(name).path
-                type = FakeMediaContentProvider.AUDIO_FILE
                 searchFilterId = R.id.chipFilterAudio
                 query = "mo"
                 expectedMime = "audio/*"
+
+                mediaContentProvider.addFakeAudioFiles(
+                    listOf(
+                        FakeAudioFile(
+                            path,name,File(path).length(),File(path).lastModified()
+                        )
+                    )
+                )
+
                 Shadows.shadowOf(MimeTypeMap.getSingleton())
                     .addExtensionMimeTypeMapping("mp3",expectedMime)
             }
             "video" -> {
                 name = "horse_ride.mp4"
                 path = rootDir.newFile(name).path
-                type = FakeMediaContentProvider.VIDEO_FILE
                 searchFilterId = R.id.chipFilterVideos
                 query = "ho"
                 expectedMime = "video/*"
+
+                mediaContentProvider.addFakeVideoFiles(
+                    listOf(
+                        FakeVideoFile(
+                            path,name,File(path).length(),File(path).lastModified()
+                        )
+                    )
+                )
+
                 Shadows.shadowOf(MimeTypeMap.getSingleton())
                     .addExtensionMimeTypeMapping("mp4",expectedMime)
             }
@@ -107,7 +133,6 @@ class OpenFileSteps(private val mediaContentProvider: FakeMediaContentProvider) 
         }
 
         expectedUri = Uri.fromFile(File(path))
-        mediaContentProvider.addTestMediaFiles(TestMediaFile(path,name, type))
         every { Environment.getExternalStorageDirectory() } returns rootMockFile
         every { rootMockFile.path } returns rootDir.root.path
         every { FileProvider.getUriForFile(any(),any(),any()) } returns expectedUri
@@ -132,9 +157,10 @@ class OpenFileSteps(private val mediaContentProvider: FakeMediaContentProvider) 
     fun userSelectFile() {
         // Click on first result
         Intents.init()
+        Thread.sleep(3000)
         onView(withId(R.id.searchResults))
             .perform(
-                actionOnItemAtPosition<FileViewHolder>(
+                actionOnItemAtPosition<FilesAdapter.FileViewHolder>(
                     0,
                     click()
                 )
