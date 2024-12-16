@@ -61,6 +61,10 @@ jobs:
 
       - name: Run unit tests
         run: ./gradlew unitTests
+        continue-on-error: true
+
+      - name: Android Test Report
+        uses: asadmansr/android-test-report-action@v1.2.0
 
   feature-tests:
     runs-on: ubuntu-latest
@@ -79,5 +83,9 @@ jobs:
 
       - name: Run feature tests
         run: ./gradlew featureTests
+        continue-on-error: true
+
+      - name: Android Test Report
+        uses: asadmansr/android-test-report-action@v1.2.0
 
 
