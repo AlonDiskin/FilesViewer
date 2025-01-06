@@ -1,7 +1,7 @@
 package com.alon.filesviewer.browser.data
 
 import com.alon.filesviewer.browser.data.implementation.DeviceFilesRepositoryImp
-import com.alon.filesviewer.browser.data.local.LocalStorageDataSource
+import com.alon.filesviewer.browser.data.local.LocalStorageRepository
 import com.alon.filesviewer.browser.domain.model.BrowsedCategory
 import com.alon.filesviewer.browser.domain.model.DeviceFile
 import com.alon.filesviewer.browser.domain.model.SearchFilter
@@ -18,7 +18,7 @@ class DeviceFilesRepositoryImpTest {
     private lateinit var repository: DeviceFilesRepositoryImp
 
     // Collaborators
-    private val localStorageDataSource: LocalStorageDataSource = mockk()
+    private val localStorageDataSource: LocalStorageRepository = mockk()
 
     @Before
     fun setUp() {

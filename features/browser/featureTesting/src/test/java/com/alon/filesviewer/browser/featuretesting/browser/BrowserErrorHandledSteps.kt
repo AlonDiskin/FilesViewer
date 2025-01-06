@@ -15,7 +15,7 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import com.alon.filesviewer.browser.data.local.LocalStorageDataSource
+import com.alon.filesviewer.browser.data.local.LocalStorageRepository
 import com.alon.filesviewer.browser.domain.model.BrowserError
 import com.alon.filesviewer.browser.domain.model.DeviceFile
 import com.alon.filesviewer.browser.ui.R
@@ -32,7 +32,7 @@ import org.junit.rules.TemporaryFolder
 import org.robolectric.Shadows
 import org.robolectric.shadows.ShadowDialog
 
-class BrowserErrorHandledSteps(localDataSource: LocalStorageDataSource) : GreenCoffeeSteps() {
+class BrowserErrorHandledSteps(localDataSource: LocalStorageRepository) : GreenCoffeeSteps() {
 
     // Browser feature ui
     private lateinit var scenario: ActivityScenario<BrowserActivity>

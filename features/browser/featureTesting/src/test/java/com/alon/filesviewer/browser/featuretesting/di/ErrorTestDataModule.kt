@@ -1,6 +1,6 @@
 package com.alon.filesviewer.browser.featuretesting.di
 
-import com.alon.filesviewer.browser.data.local.LocalStorageDataSource
+import com.alon.filesviewer.browser.data.local.LocalStorageRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,7 +14,7 @@ object ErrorTestDataModule {
 
     @Provides
     @Singleton
-    fun provideLocalStorageDataSource(): LocalStorageDataSource {
+    fun provideLocalStorageDataSource(): LocalStorageRepository {
         return mockk()
     }
 }
