@@ -1,17 +1,19 @@
 package com.alon.filesviewer.browser.data.local
 
 import android.content.ContentResolver
+import android.database.ContentObserver
 import android.net.Uri
 import android.provider.MediaStore
 import com.alon.filesviewer.browser.domain.model.BrowserError
 import com.alon.filesviewer.browser.domain.model.DeviceFile
 import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MediaProvider @Inject constructor(private val mapper: FileTypeMapper,
-                                        private val contentResolver: ContentResolver) {
+class LocalMediaRepository @Inject constructor(private val mapper: FileTypeMapper,
+                                               private val contentResolver: ContentResolver) {
 
     companion object {
         const val ERROR_MEDIA_QUERY = "media store query error"
@@ -32,10 +34,30 @@ class MediaProvider @Inject constructor(private val mapper: FileTypeMapper,
                            selection: String?,
                            selectionArgs: Array<String>?,
                            sortOrder: String?): Observable<Result<List<DeviceFile>>> {
-        return RxLocalStorage.mediaObservable(
-            { fetchMedia(collectionUri, selection, selectionArgs, sortOrder) },
-            contentResolver,
-            collectionUri)
+
+        return Observable.create { emitter ->
+            // Initialize content observer
+            val fetch = { fetchMedia(collectionUri, selection, selectionArgs, sortOrder) }
+            val contentObserver = object : ContentObserver(null) {
+                override fun onChange(selfChange: Boolean) {
+                    super.onChange(selfChange)
+                    emitter.onNext(fetch.invoke())
+                }
+            }
+
+            // Register observer to content provider
+            contentResolver.registerContentObserver(
+                collectionUri,
+                true,
+                contentObserver)
+
+            // Unregister observer from content provider upon this observable cancellation
+            emitter.setCancellable { contentResolver.unregisterContentObserver(contentObserver) }
+
+            // Initial content fetch
+            emitter.onNext(fetch.invoke())
+        }
+            .subscribeOn(Schedulers.io())
     }
 
     private fun fetchMedia(collectionUri: Uri,

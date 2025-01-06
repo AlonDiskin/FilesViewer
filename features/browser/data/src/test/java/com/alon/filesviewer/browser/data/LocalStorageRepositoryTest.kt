@@ -1,9 +1,9 @@
 package com.alon.filesviewer.browser.data
 
 import android.net.Uri
-import com.alon.filesviewer.browser.data.local.FilesProvider
-import com.alon.filesviewer.browser.data.local.LocalStorageDataSource
-import com.alon.filesviewer.browser.data.local.MediaProvider
+import com.alon.filesviewer.browser.data.local.LocalFilesRepository
+import com.alon.filesviewer.browser.data.local.LocalStorageRepository
+import com.alon.filesviewer.browser.data.local.LocalMediaRepository
 import com.alon.filesviewer.browser.data.local.PathProvider
 import com.alon.filesviewer.browser.domain.model.BrowsedCategory
 import com.alon.filesviewer.browser.domain.model.DeviceFile
@@ -16,19 +16,19 @@ import io.reactivex.Observable
 import org.junit.Before
 import org.junit.Test
 
-class LocalStorageSourceTest {
+class LocalStorageRepositoryTest {
 
     // Test subject
-    private lateinit var localStorageSource: LocalStorageDataSource
+    private lateinit var localStorageRepo: LocalStorageRepository
 
     // Collaborators
-    private val filesProvider: FilesProvider = mockk()
-    private val mediaProvider: MediaProvider = mockk()
+    private val filesProvider: LocalFilesRepository = mockk()
+    private val mediaProvider: LocalMediaRepository = mockk()
     private val pathProvider: PathProvider = mockk()
 
     @Before
     fun setUp() {
-        localStorageSource = LocalStorageDataSource(filesProvider, mediaProvider, pathProvider)
+        localStorageRepo = LocalStorageRepository(filesProvider, mediaProvider, pathProvider)
     }
 
     @Test
@@ -43,7 +43,7 @@ class LocalStorageSourceTest {
         every { filesProvider.search(query,rootPath) } returns res
 
         // When
-        val actualRes = localStorageSource.search(query, filter)
+        val actualRes = localStorageRepo.search(query, filter)
 
         // Then
         verify(exactly = 1) { pathProvider.getRootDirPath() }
@@ -63,7 +63,7 @@ class LocalStorageSourceTest {
         every { mediaProvider.search(query,audioUri) } returns res
 
         // When
-        val actualRes = localStorageSource.search(query, filter)
+        val actualRes = localStorageRepo.search(query, filter)
 
         // Then
         verify(exactly = 1) { pathProvider.getAudioCollectionUri() }
@@ -83,7 +83,7 @@ class LocalStorageSourceTest {
         every { mediaProvider.search(query,videoUri) } returns res
 
         // When
-        val actualRes = localStorageSource.search(query, filter)
+        val actualRes = localStorageRepo.search(query, filter)
 
         // Then
         verify(exactly = 1) { pathProvider.getVideoCollectionUri() }
@@ -103,7 +103,7 @@ class LocalStorageSourceTest {
         every { mediaProvider.search(query,imageUri) } returns res
 
         // When
-        val actualRes = localStorageSource.search(query, filter)
+        val actualRes = localStorageRepo.search(query, filter)
 
         // Then
         verify(exactly = 1) { pathProvider.getImageCollectionUri() }
@@ -123,7 +123,7 @@ class LocalStorageSourceTest {
         every { filesProvider.search(query,dirPath) } returns res
 
         // When
-        val actualRes = localStorageSource.search(query, filter)
+        val actualRes = localStorageRepo.search(query, filter)
 
         // Then
         verify(exactly = 1) { pathProvider.getDownloadsDirPath() }
@@ -142,7 +142,7 @@ class LocalStorageSourceTest {
         every { filesProvider.getFolderFiles(rootPath) } returns res
 
         // When
-        val actualRes = localStorageSource.getCategoryFiles(category)
+        val actualRes = localStorageRepo.getCategoryFiles(category)
 
         // Then
         assertThat(actualRes).isEqualTo(res)
@@ -159,7 +159,7 @@ class LocalStorageSourceTest {
         every { filesProvider.getFolderFiles(downloadPath) } returns res
 
         // When
-        val actualRes = localStorageSource.getCategoryFiles(category)
+        val actualRes = localStorageRepo.getCategoryFiles(category)
 
         // Then
         assertThat(actualRes).isEqualTo(res)
@@ -176,7 +176,7 @@ class LocalStorageSourceTest {
         every { mediaProvider.getAll(uri) } returns res
 
         // When
-        val actualRes = localStorageSource.getCategoryFiles(category)
+        val actualRes = localStorageRepo.getCategoryFiles(category)
 
         // Then
         assertThat(actualRes).isEqualTo(res)
@@ -193,7 +193,7 @@ class LocalStorageSourceTest {
         every { mediaProvider.getAll(uri) } returns res
 
         // When
-        val actualRes = localStorageSource.getCategoryFiles(category)
+        val actualRes = localStorageRepo.getCategoryFiles(category)
 
         // Then
         assertThat(actualRes).isEqualTo(res)
@@ -210,7 +210,7 @@ class LocalStorageSourceTest {
         every { mediaProvider.getAll(uri) } returns res
 
         // When
-        val actualRes = localStorageSource.getCategoryFiles(category)
+        val actualRes = localStorageRepo.getCategoryFiles(category)
 
         // Then
         assertThat(actualRes).isEqualTo(res)
@@ -225,7 +225,7 @@ class LocalStorageSourceTest {
         every { filesProvider.getFolderFiles(path) } returns res
 
         // When
-        val actualRes = localStorageSource.getFolderFiles(path)
+        val actualRes = localStorageRepo.getFolderFiles(path)
 
         // Then
         assertThat(actualRes).isEqualTo(res)
