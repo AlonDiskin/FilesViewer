@@ -23,7 +23,6 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.pressImeActionButton
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.contrib.RecyclerViewActions.scrollToPosition
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
@@ -38,13 +37,13 @@ import com.alon.filesviewer.browser.domain.model.BrowserError
 import com.alon.filesviewer.browser.domain.model.DeviceFile
 import com.alon.filesviewer.browser.domain.model.DeviceFileType
 import com.alon.filesviewer.browser.domain.model.SearchFilter
-import com.alon.filesviewer.browser.ui.RecyclerViewMatcher.withRecyclerView
-import com.alon.filesviewer.browser.ui.controller.FilesAdapter
+import com.alon.filesviewer.browser.ui.util.RecyclerViewMatcher.withRecyclerView
 import com.alon.filesviewer.browser.ui.controller.FilesAdapter.FileViewHolder
 import com.alon.filesviewer.browser.ui.controller.SearchActivity
 import com.alon.filesviewer.browser.ui.data.SearchUiState
+import com.alon.filesviewer.browser.ui.util.withCheckedChip
+import com.alon.filesviewer.browser.ui.util.withRecyclerViewSize
 import com.alon.filesviewer.browser.ui.viewmodel.SearchViewModel
-import com.google.android.material.textview.MaterialTextView
 import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
@@ -406,5 +405,38 @@ class SearchActivityTest {
         onView(withText(R.string.button_dialog_positive))
             .inRoot(isDialog())
             .check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun openFolderFilesInBrowserAndCloseScreen_WhenSelectToOpenFolderSearchResult() {
+        // Given
+        scenario = ActivityScenario.launchActivityForResult(SearchActivity::class.java)
+        val results = listOf(
+            DeviceFile(
+                "path",
+                "folder_name",
+                DeviceFileType.DIR,
+                2000L,
+                "",
+                2000L
+            )
+        )
+        uiState.value = SearchUiState(results = results)
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+        Thread.sleep(3000)
+
+        mockkStatic(FileProvider::class)
+        every { FileProvider.getUriForFile(any(),any(), File(results.first().path)) } returns Uri.EMPTY
+
+        // When
+        onView(withRecyclerView(R.id.searchResults).atPosition(0))
+            .perform(click())
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        // Then
+        assertThat(scenario.result.resultCode).isEqualTo(Activity.RESULT_OK)
+        assertThat(scenario.result.resultData.getStringExtra(SearchActivity.RESULT_DIR_PATH))
+            .isEqualTo(results.first().path)
+
     }
 }

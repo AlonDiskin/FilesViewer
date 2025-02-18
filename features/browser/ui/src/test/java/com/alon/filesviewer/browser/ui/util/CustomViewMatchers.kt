@@ -1,4 +1,4 @@
-package com.alon.filesviewer.browser.ui
+package com.alon.filesviewer.browser.ui.util
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView

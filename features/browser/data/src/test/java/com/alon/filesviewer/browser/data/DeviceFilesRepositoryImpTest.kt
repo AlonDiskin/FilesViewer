@@ -2,12 +2,13 @@ package com.alon.filesviewer.browser.data
 
 import com.alon.filesviewer.browser.data.implementation.DeviceFilesRepositoryImp
 import com.alon.filesviewer.browser.data.local.LocalStorageRepository
-import com.alon.filesviewer.browser.domain.model.BrowsedCategory
+import com.alon.filesviewer.browser.domain.model.DeviceFilesCollection
 import com.alon.filesviewer.browser.domain.model.DeviceFile
 import com.alon.filesviewer.browser.domain.model.SearchFilter
 import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import io.reactivex.Observable
 import org.junit.Before
 import org.junit.Test
@@ -57,17 +58,18 @@ class DeviceFilesRepositoryImpTest {
     }
 
     @Test
-    fun loadCategoryFilesFromLocalStorage_WhenQueried() {
+    fun loadCollectionFilesFromLocalStorage_WhenQueried() {
         // Given
-        val category = BrowsedCategory.ALL
+        val collection = mockk<DeviceFilesCollection>()
         val res= mockk<Observable<Result<List<DeviceFile>>>>()
 
-        every { localStorageDataSource.getCategoryFiles(category) } returns res
+        every { localStorageDataSource.getCollectionFiles(collection) } returns res
 
         // When
-        val actualRes = repository.getByCategory(category)
+        val actualRes = repository.getCollection(collection)
 
         // Then
+        verify(exactly = 1) { repository.getCollection(collection) }
         assertThat(actualRes).isEqualTo(res)
     }
 }

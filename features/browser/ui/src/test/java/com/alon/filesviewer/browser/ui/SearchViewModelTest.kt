@@ -10,6 +10,7 @@ import com.alon.filesviewer.browser.domain.model.SearchRequest
 import com.alon.filesviewer.browser.domain.usecase.SearchDeviceFilesUseCase
 import com.alon.filesviewer.browser.ui.viewmodel.SearchViewModel.*
 import com.alon.filesviewer.browser.ui.data.SearchUiState
+import com.alon.filesviewer.browser.ui.util.WhiteBox
 import com.alon.filesviewer.browser.ui.viewmodel.SearchViewModel
 import com.google.common.truth.Truth.*
 import io.mockk.every

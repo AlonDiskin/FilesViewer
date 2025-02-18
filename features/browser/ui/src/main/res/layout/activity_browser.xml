@@ -8,7 +8,7 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
         android:orientation="vertical"
-        tools:context=".FeatureTwoActivity">
+        tools:context=".controller.BrowserActivity">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/main"
@@ -25,44 +25,17 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:title="@string/title_app_name"
-                app:menu="@menu/menu_browser"/>
+                app:menu="@menu/menu_browser"
+                app:title="FilesBrowser" />
 
-            <HorizontalScrollView
-                android:id="@+id/currentPathWrapper"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/toolbar">
-
-                <TextView
-                    android:id="@+id/currentPathLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="5dp"
-                    android:lines="1"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                    tools:text="/Home" />
-
-            </HorizontalScrollView>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/browsedFiles"
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fragment_container_view"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:scrollbarSize="4dp"
-                android:scrollbarThumbVertical="?attr/colorSecondary"
-                android:scrollbars="vertical"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/currentPathWrapper"
-                tools:listitem="@layout/file" />
+                app:layout_constraintTop_toBottomOf="@id/toolbar"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

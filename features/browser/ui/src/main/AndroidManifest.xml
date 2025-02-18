@@ -16,6 +16,10 @@
             android:name=".controller.SearchActivity"
             android:exported="false"
             android:theme="@style/Theme.FilesViewer" />
+        <activity
+            android:name=".controller.HiltTestActivity"
+            android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar"
+            android:exported="false"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"

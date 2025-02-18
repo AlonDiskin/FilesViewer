@@ -2,7 +2,7 @@ package com.alon.filesbrowser.browser.domain
 
 import com.alon.filesviewer.browser.domain.interfaces.DeviceFilesRepository
 import com.alon.filesviewer.browser.domain.model.BrowseRequest
-import com.alon.filesviewer.browser.domain.model.BrowsedCategory
+import com.alon.filesviewer.browser.domain.model.DeviceFilesCollection
 import com.alon.filesviewer.browser.domain.model.DeviceFile
 import com.alon.filesviewer.browser.domain.usecase.BrowseDeviceFilesUseCase
 import com.google.common.truth.Truth.assertThat
@@ -27,20 +27,20 @@ class BrowseFilesUseCaseTest {
     }
 
     @Test
-    fun fetchDeviceCategoryFiles_WhenExecutedToBrowseCategory() {
+    fun fetchDeviceCollectionFiles_WhenExecutedToBrowseCollection() {
         // Given
-        val files: Observable<Result<List<DeviceFile>>> = mockk()
-        val category = BrowsedCategory.ALL
-        val request = BrowseRequest.Category(category)
+        val filesCollection: Observable<Result<List<DeviceFile>>> = mockk()
+        val requestCollection = mockk<DeviceFilesCollection>()
+        val request = BrowseRequest.Collection(requestCollection)
 
-        every { repo.getByCategory(category) } returns files
+        every { repo.getCollection(requestCollection) } returns filesCollection
 
         // When
         val result = useCase.execute(request)
 
         // Then
-        verify(exactly = 1) { repo.getByCategory(category) }
-        assertThat(result).isEqualTo(files)
+        verify(exactly = 1) { repo.getCollection(requestCollection) }
+        assertThat(result).isEqualTo(filesCollection)
     }
 
     @Test

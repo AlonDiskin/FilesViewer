@@ -35,3 +35,13 @@ Feature: Search device files
     And select to view its detail info
     Then app should show file detail
 
+  @browse-result
+  Scenario Outline: Folder result is browsed
+    Given user has a folder named "<folder_name>" with "<file_name>" file in it on device
+    When he find folder via search
+    And select folder form results
+    Then app should list folder in browser
+    Examples:
+    | folder_name | file_name  |
+    | my folder   | file_0.txt |
+
