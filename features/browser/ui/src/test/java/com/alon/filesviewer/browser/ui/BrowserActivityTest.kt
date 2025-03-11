@@ -15,10 +15,15 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
+import androidx.test.espresso.matcher.RootMatchers.isDialog
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.alon.filesviewer.browser.domain.model.DeviceFilesCollection
 import com.alon.filesviewer.browser.domain.model.DeviceNamedFolder
@@ -40,6 +45,7 @@ import org.robolectric.Shadows
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.LooperMode
 import org.robolectric.fakes.RoboMenuItem
+import org.robolectric.shadows.ShadowDialog
 
 @RunWith(AndroidJUnit4::class)
 @LooperMode(LooperMode.Mode.PAUSED)
@@ -235,40 +241,56 @@ class BrowserActivityTest {
         }
     }
 
-//    @Test
-//    fun showExitAppConfirmation_WhenPressBackToExitApp() {
-//        // Given
-//        every { viewModel.isRootFolder() } returns true
-//
-//        // When
-//        pressBack()
-//        Shadows.shadowOf(Looper.getMainLooper()).idle()
-//
-//        // Then
-//        assertThat(ShadowDialog.getLatestDialog().isShowing).isTrue()
-//        onView(withText(R.string.title_dialog_exit_app))
-//            .inRoot(isDialog())
-//            .check(matches(isDisplayed()))
-//    }
-//
-//    @Test
-//    fun closeApp_WhenUserSelectExitInAppExitConfirmationUi() {
-//        // Given
-//        every { viewModel.isRootFolder() } returns true
-//
-//        // When
-//        pressBack()
-//        Shadows.shadowOf(Looper.getMainLooper()).idle()
-//        onView(withText(R.string.button_dialog_positive))
-//            .inRoot(isDialog())
-//            .perform(click())
-//        Shadows.shadowOf(Looper.getMainLooper()).idle()
-//
-//        // Then
-//        scenario.onActivity {
-//            assertThat(it.isFinishing).isTrue()
-//        }
-//    }
+    @Test
+    fun showExitAppDialog_WhenPressBack() {
+        // Given
+
+        // When
+        pressBack()
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        // Then
+        assertThat(ShadowDialog.getLatestDialog().isShowing).isTrue()
+        onView(withText(R.string.title_dialog_exit_app))
+            .inRoot(isDialog())
+            .check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun closeScreen_WhenUserConfirmAppExit() {
+        // Given
+
+        // When
+        pressBack()
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+        onView(withText(R.string.button_dialog_positive))
+            .inRoot(isDialog())
+            .perform(click())
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        // Then
+        scenario.onActivity {
+            assertThat(it.isFinishing).isTrue()
+        }
+    }
+
+    @Test
+    fun doNotCloseScreen_WhenUserDeclineAppExit() {
+        // Given
+
+        // When
+        pressBack()
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+        onView(withText(R.string.button_dialog_negative))
+            .inRoot(isDialog())
+            .perform(click())
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        // Then
+        scenario.onActivity {
+            assertThat(it.isFinishing).isFalse()
+        }
+    }
 
     @Test
     fun openSearchScreen_WhenUserSelectToSearchDeviceFile() {

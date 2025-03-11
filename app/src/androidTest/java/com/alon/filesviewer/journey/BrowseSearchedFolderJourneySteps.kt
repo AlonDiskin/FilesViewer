@@ -4,7 +4,6 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
@@ -20,16 +19,17 @@ import com.mauriciotogneri.greencoffee.annotations.Then
 import com.mauriciotogneri.greencoffee.annotations.When
 import org.hamcrest.CoreMatchers.allOf
 
-class BrowseSearchedFolderSteps : GreenCoffeeSteps() {
+class BrowseSearchedFolderJourneySteps : GreenCoffeeSteps() {
 
     private val searchedFolderName = "my-music"
     private val searchedFolderFiles = listOf("file_1.txt","file_2.txt")
+    private lateinit var testFolder: String
 
     @Given("^user has a folder named 'my-music' that has files$")
     fun userHasFolder() {
-        val folder = DeviceUtil.createFolder(searchedFolderName)
+        testFolder = DeviceUtil.createFolder(searchedFolderName)
         DeviceUtil.createFiles(
-            folder,
+            testFolder,
             searchedFolderFiles
         )
     }
@@ -72,5 +72,9 @@ class BrowseSearchedFolderSteps : GreenCoffeeSteps() {
             searchedFolderFiles[1]
         )))
             .check(matches(isDisplayed()))
+    }
+
+    fun getTestFolder(): String {
+        return testFolder
     }
 }

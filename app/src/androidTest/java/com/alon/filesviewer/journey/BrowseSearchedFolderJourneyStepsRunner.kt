@@ -9,7 +9,6 @@ import com.mauriciotogneri.greencoffee.Scenario
 import com.mauriciotogneri.greencoffee.ScenarioConfig
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import org.junit.After
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -19,14 +18,14 @@ import java.util.Locale
 @HiltAndroidTest
 @RunWith(Parameterized::class)
 @LargeTest
-class OpenImageFileJourneyStepsRunner(scenario: ScenarioConfig) :  GreenCoffeeTest(scenario) {
+class BrowseSearchedFolderJourneyStepsRunner(scenario: ScenarioConfig) :  GreenCoffeeTest(scenario) {
 
     companion object {
         @JvmStatic
         @Parameterized.Parameters(name = "{0}")
         fun scenarios(): Iterable<ScenarioConfig> {
             return GreenCoffeeConfig()
-                .withFeatureFromAssets("assets/feature/open_image.feature")
+                .withFeatureFromAssets("assets/feature/browse_searched_folder.feature")
                 .scenarios()
         }
     }
@@ -35,16 +34,16 @@ class OpenImageFileJourneyStepsRunner(scenario: ScenarioConfig) :  GreenCoffeeTe
     val hiltRule = HiltAndroidRule(this)
     @get:Rule
     val permissionRule = GrantManageStoragePermissionRule()
-    private lateinit var steps: OpenImageFileJourneySteps
+    private lateinit var steps: BrowseSearchedFolderJourneySteps
 
     @Test
     fun test() {
-        steps = OpenImageFileJourneySteps()
+        steps = BrowseSearchedFolderJourneySteps()
         start(steps)
     }
 
     override fun afterScenarioEnds(scenario: Scenario?, locale: Locale?) {
-        DeviceUtil.deleteFilesFromDevice(steps.getTestFilePath())
+        DeviceUtil.deleteFilesFromDevice(steps.getTestFolder())
         super.afterScenarioEnds(scenario, locale)
     }
 }

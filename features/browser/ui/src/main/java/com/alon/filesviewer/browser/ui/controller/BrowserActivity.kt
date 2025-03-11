@@ -11,6 +11,7 @@ import android.provider.Settings
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultCallback
@@ -31,6 +32,7 @@ import com.alon.filesviewer.browser.ui.R
 import com.alon.filesviewer.browser.ui.databinding.ActivityBrowserBinding
 import com.alon.filesviewer.browser.ui.viewmodel.CollectionBrowserViewModel
 import com.alon.filesviewer.browser.ui.viewmodel.FolderBrowserViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.migration.OptionalInject
 
@@ -160,6 +162,13 @@ class BrowserActivity : AppCompatActivity() {
                 }
             }
         }
+
+        // Add custom handling for back pressing
+        onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                showExitAppDialog { finish() }
+            }
+        })
     }
 
     private fun exitAppIfFilesAccessPermissionIfNotGranted() {
@@ -216,5 +225,14 @@ class BrowserActivity : AppCompatActivity() {
                 BrowserFragmentsFactory.createFolderBrowserFragment(folder)
             )
         }
+    }
+
+    private fun showExitAppDialog(exitAction: () -> (Unit)) {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.title_dialog_exit_app))
+            .setMessage(getString(R.string.message_dialog_exit_app))
+            .setPositiveButton(getString(R.string.button_dialog_positive)) { _, _ -> exitAction.invoke() }
+            .setNegativeButton(getString(R.string.button_dialog_negative)) { dialog, _ -> dialog.dismiss() }
+            .show()
     }
 }
