@@ -10,6 +10,7 @@ import com.alon.filesviewer.browser.domain.model.SearchRequest
 import com.alon.filesviewer.browser.domain.usecase.SearchDeviceFilesUseCase
 import com.alon.filesviewer.browser.ui.data.SearchUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.migration.OptionalInject
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.BehaviorSubject

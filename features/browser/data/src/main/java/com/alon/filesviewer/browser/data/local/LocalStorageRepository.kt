@@ -1,6 +1,6 @@
 package com.alon.filesviewer.browser.data.local
 
-import com.alon.filesviewer.browser.domain.model.BrowsedCategory
+import com.alon.filesviewer.browser.domain.model.DeviceFilesCollection
 import com.alon.filesviewer.browser.domain.model.DeviceFile
 import com.alon.filesviewer.browser.domain.model.SearchFilter
 import io.reactivex.Observable
@@ -25,13 +25,11 @@ class LocalStorageRepository @Inject constructor(private val filesRepo: LocalFil
         }
     }
 
-    fun getCategoryFiles(category: BrowsedCategory): Observable<Result<List<DeviceFile>>> {
-        return when(category) {
-            BrowsedCategory.ALL -> filesRepo.getFolderFiles(pathProvider.getRootDirPath())
-            BrowsedCategory.DOWNLOADS -> filesRepo.getFolderFiles(pathProvider.getDownloadsDirPath())
-            BrowsedCategory.IMAGE -> mediaRepo.getAll(pathProvider.getImageCollectionUri())
-            BrowsedCategory.VIDEO -> mediaRepo.getAll(pathProvider.getVideoCollectionUri())
-            BrowsedCategory.AUDIO -> mediaRepo.getAll(pathProvider.getAudioCollectionUri())
+    fun getCollectionFiles(collection: DeviceFilesCollection): Observable<Result<List<DeviceFile>>> {
+        return when(collection) {
+            DeviceFilesCollection.IMAGE -> mediaRepo.getAll(pathProvider.getImageCollectionUri())
+            DeviceFilesCollection.VIDEO -> mediaRepo.getAll(pathProvider.getVideoCollectionUri())
+            DeviceFilesCollection.AUDIO -> mediaRepo.getAll(pathProvider.getAudioCollectionUri())
         }
     }
 

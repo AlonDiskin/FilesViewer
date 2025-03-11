@@ -1,4 +1,4 @@
-package com.alon.filesviewer.browser.ui
+package com.alon.filesviewer.browser.ui.util
 
 import java.lang.reflect.Field
 

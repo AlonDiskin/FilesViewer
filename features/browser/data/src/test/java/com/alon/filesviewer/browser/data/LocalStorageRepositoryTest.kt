@@ -5,7 +5,7 @@ import com.alon.filesviewer.browser.data.local.LocalFilesRepository
 import com.alon.filesviewer.browser.data.local.LocalStorageRepository
 import com.alon.filesviewer.browser.data.local.LocalMediaRepository
 import com.alon.filesviewer.browser.data.local.PathProvider
-import com.alon.filesviewer.browser.domain.model.BrowsedCategory
+import com.alon.filesviewer.browser.domain.model.DeviceFilesCollection
 import com.alon.filesviewer.browser.domain.model.DeviceFile
 import com.alon.filesviewer.browser.domain.model.SearchFilter
 import com.google.common.truth.Truth.assertThat
@@ -132,43 +132,9 @@ class LocalStorageRepositoryTest {
     }
 
     @Test
-    fun loadRootFolder_WhenQueriedForAllFilesCategory() {
+    fun loadAudioFiles_WhenQueriedForAudioCollection() {
         // Given
-        val category = BrowsedCategory.ALL
-        val rootPath = "path"
-        val res = mockk<Observable<Result<List<DeviceFile>>>>()
-
-        every { pathProvider.getRootDirPath() } returns rootPath
-        every { filesProvider.getFolderFiles(rootPath) } returns res
-
-        // When
-        val actualRes = localStorageRepo.getCategoryFiles(category)
-
-        // Then
-        assertThat(actualRes).isEqualTo(res)
-    }
-
-    @Test
-    fun loadDownloadFolder_WhenQueriedForDownloadCategory() {
-        // Given
-        val category = BrowsedCategory.DOWNLOADS
-        val downloadPath = "path"
-        val res = mockk<Observable<Result<List<DeviceFile>>>>()
-
-        every { pathProvider.getDownloadsDirPath() } returns downloadPath
-        every { filesProvider.getFolderFiles(downloadPath) } returns res
-
-        // When
-        val actualRes = localStorageRepo.getCategoryFiles(category)
-
-        // Then
-        assertThat(actualRes).isEqualTo(res)
-    }
-
-    @Test
-    fun loadAudioFiles_WhenQueriedForAudioCategory() {
-        // Given
-        val category = BrowsedCategory.AUDIO
+        val collection = DeviceFilesCollection.AUDIO
         val uri = mockk<Uri>()
         val res = mockk<Observable<Result<List<DeviceFile>>>>()
 
@@ -176,16 +142,16 @@ class LocalStorageRepositoryTest {
         every { mediaProvider.getAll(uri) } returns res
 
         // When
-        val actualRes = localStorageRepo.getCategoryFiles(category)
+        val actualRes = localStorageRepo.getCollectionFiles(collection)
 
         // Then
         assertThat(actualRes).isEqualTo(res)
     }
 
     @Test
-    fun loadImageFiles_WhenQueriedForImageCategory() {
+    fun loadImageFiles_WhenQueriedForImageCollection() {
         // Given
-        val category = BrowsedCategory.IMAGE
+        val collection = DeviceFilesCollection.IMAGE
         val uri = mockk<Uri>()
         val res = mockk<Observable<Result<List<DeviceFile>>>>()
 
@@ -193,16 +159,16 @@ class LocalStorageRepositoryTest {
         every { mediaProvider.getAll(uri) } returns res
 
         // When
-        val actualRes = localStorageRepo.getCategoryFiles(category)
+        val actualRes = localStorageRepo.getCollectionFiles(collection)
 
         // Then
         assertThat(actualRes).isEqualTo(res)
     }
 
     @Test
-    fun loadVideoFiles_WhenQueriedForVideoCategory() {
+    fun loadVideoFiles_WhenQueriedForVideoCollection() {
         // Given
-        val category = BrowsedCategory.VIDEO
+        val collection = DeviceFilesCollection.VIDEO
         val uri = mockk<Uri>()
         val res = mockk<Observable<Result<List<DeviceFile>>>>()
 
@@ -210,7 +176,7 @@ class LocalStorageRepositoryTest {
         every { mediaProvider.getAll(uri) } returns res
 
         // When
-        val actualRes = localStorageRepo.getCategoryFiles(category)
+        val actualRes = localStorageRepo.getCollectionFiles(collection)
 
         // Then
         assertThat(actualRes).isEqualTo(res)

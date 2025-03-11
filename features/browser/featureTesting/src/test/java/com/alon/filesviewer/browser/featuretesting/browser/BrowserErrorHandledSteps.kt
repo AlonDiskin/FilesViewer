@@ -42,7 +42,8 @@ class BrowserErrorHandledSteps(localDataSource: LocalStorageRepository) : GreenC
 
     init {
         // Stub mocked data source
-        every { localDataSource.getCategoryFiles(any()) } returns errorSubject
+        //every { localDataSource.getCollectionFiles(any()) } returns errorSubject
+        every { localDataSource.getFolderFiles(any()) } returns errorSubject
 
         // Stub storage permission as granted
         mockkStatic(Environment::class)

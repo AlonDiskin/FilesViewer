@@ -4,5 +4,5 @@ sealed class BrowseRequest {
 
     data class Folder(val path: String): BrowseRequest()
 
-    data class Category(val category: BrowsedCategory): BrowseRequest()
+    data class Collection(val collection: DeviceFilesCollection): BrowseRequest()
 }

@@ -1,11 +1,13 @@
 package com.alon.filesviewer.util
 
+import android.app.Instrumentation
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import android.provider.MediaStore
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
@@ -98,5 +100,29 @@ object DeviceUtil {
     fun deleteFromMediaStore(uri: Uri) {
         getApplicationContext<Context>()
             .contentResolver.delete(uri,null,null)
+    }
+
+    fun createFolder(name: String): String {
+        val folder = File(Environment.getExternalStorageDirectory(), name)
+
+        if (!folder.exists()) {
+            if (!folder.mkdirs()) {
+                throw IllegalStateException("Failed to create $name folder!")
+            }
+        }
+
+        return folder.path
+    }
+
+    fun createFiles(folder: String, files: List<String>) {
+        files.forEach { fileName ->
+            val file = File(folder.plus("/").plus(fileName))
+
+            if (!file.exists()) {
+                if (!file.createNewFile()) {
+                    throw IllegalStateException("Failed to create $fileName file!")
+                }
+            }
+        }
     }
 }

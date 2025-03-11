@@ -54,6 +54,7 @@ dependencies {
     implementation(libs.activityKtx)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.fragmentKtx)
 
     // Rx
     implementation(libs.rxKotlin)

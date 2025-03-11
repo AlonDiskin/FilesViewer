@@ -39,6 +39,10 @@ import java.io.File
 @OptionalInject
 class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
 
+    companion object {
+        const val RESULT_DIR_PATH = "dir path"
+    }
+
     private lateinit var layout: ActivitySearchBinding
     private val viewModel: SearchViewModel by viewModels()
 
@@ -176,7 +180,9 @@ class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener, Menu
 
             startActivity(chooser)
         } else {
-            // TODO
+            // send folder path back to browser and close activity
+            setResult(Activity.RESULT_OK,Intent().apply { putExtra(RESULT_DIR_PATH,file.path) })
+            finish()
         }
     }
 

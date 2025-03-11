@@ -10,7 +10,7 @@ class BrowseDeviceFilesUseCase @Inject constructor(private val repository: Devic
 
     fun execute(request: BrowseRequest): Observable<Result<List<DeviceFile>>> {
         return when(request) {
-            is BrowseRequest.Category -> repository.getByCategory(request.category)
+            is BrowseRequest.Collection -> repository.getCollection(request.collection)
             is BrowseRequest.Folder -> repository.getFolder(request.path)
         }
     }

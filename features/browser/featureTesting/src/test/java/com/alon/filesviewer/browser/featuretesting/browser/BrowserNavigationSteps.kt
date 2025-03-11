@@ -11,6 +11,7 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions
+import androidx.test.espresso.assertion.ViewAssertions.*
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withText
@@ -96,7 +97,7 @@ class BrowserNavigationSteps : GreenCoffeeSteps() {
     fun browserListFolderFiles() {
         Thread.sleep(5000)
         onView(ViewMatchers.withId(R.id.browsedFiles))
-            .check(ViewAssertions.matches(withRecyclerViewSize(selectedFolderFilesName.size)))
+            .check(matches(withRecyclerViewSize(selectedFolderFilesName.size)))
         expectedAndroidFolderFilesNames.forEachIndexed { index, fileName ->
             onView(ViewMatchers.withId(R.id.browsedFiles))
                 .perform(
@@ -108,7 +109,7 @@ class BrowserNavigationSteps : GreenCoffeeSteps() {
             Shadows.shadowOf(Looper.getMainLooper()).idle()
             onView(RecyclerViewMatcher.withRecyclerView(R.id.browsedFiles).atPosition(index))
                 .check(
-                    ViewAssertions.matches(
+                    matches(
                         ViewMatchers.hasDescendant(
                             CoreMatchers.allOf(
                                 ViewMatchers.withId(R.id.fileName),
@@ -126,12 +127,13 @@ class BrowserNavigationSteps : GreenCoffeeSteps() {
     fun userReturnToRoot() {
         pressBack()
         Shadows.shadowOf(Looper.getMainLooper()).idle()
+        Thread.sleep(5000)
     }
 
     @Then("^browser should list root folder content$")
     fun browserShouldListRootFolder() {
         onView(ViewMatchers.withId(R.id.browsedFiles))
-            .check(ViewAssertions.matches(withRecyclerViewSize(deviceRootFolderNames.size)))
+            .check(matches(withRecyclerViewSize(deviceRootFolderNames.size)))
         deviceRootFolderNames.forEachIndexed { index, rootFolderName ->
             onView(ViewMatchers.withId(R.id.browsedFiles))
                 .perform(
@@ -143,7 +145,7 @@ class BrowserNavigationSteps : GreenCoffeeSteps() {
             Shadows.shadowOf(Looper.getMainLooper()).idle()
             onView(RecyclerViewMatcher.withRecyclerView(R.id.browsedFiles).atPosition(index))
                 .check(
-                    ViewAssertions.matches(
+                    matches(
                         ViewMatchers.hasDescendant(
                             CoreMatchers.allOf(
                                 ViewMatchers.withId(R.id.fileName),
