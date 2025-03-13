@@ -15,14 +15,14 @@ import org.junit.runners.Parameterized
 @HiltAndroidTest
 @RunWith(Parameterized::class)
 @LargeTest
-class BrowseSearchedFolderStepsRunner(scenario: ScenarioConfig) :  GreenCoffeeTest(scenario) {
+class ConfirmAppExitJourneyStepsRunner(scenario: ScenarioConfig) :  GreenCoffeeTest(scenario) {
 
     companion object {
         @JvmStatic
         @Parameterized.Parameters(name = "{0}")
         fun scenarios(): Iterable<ScenarioConfig> {
             return GreenCoffeeConfig()
-                .withFeatureFromAssets("assets/feature/browse_searched_folder.feature")
+                .withFeatureFromAssets("assets/feature/confirm_app_exit.feature")
                 .scenarios()
         }
     }
@@ -35,6 +35,6 @@ class BrowseSearchedFolderStepsRunner(scenario: ScenarioConfig) :  GreenCoffeeTe
 
     @Test
     fun test() {
-        start(BrowseSearchedFolderSteps())
+        start(ConfirmAppExitJourneySteps())
     }
 }

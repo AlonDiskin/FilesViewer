@@ -59,4 +59,8 @@ class OpenImageFileJourneySteps : GreenCoffeeSteps() {
         DeviceUtil.deleteFromMediaStore(testFile.second)
         DeviceUtil.getDevice().pressBack()
     }
+
+    fun getTestFilePath(): String {
+        return testFile.first
+    }
 }
