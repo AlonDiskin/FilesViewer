@@ -2,6 +2,12 @@ import java.net.URI
 import java.net.URL
 import java.net.URLEncoder
 
+include(":features:common:ui")
+
+
+include(":features:login:ui")
+
+
 pluginManagement {
     repositories {
         google {

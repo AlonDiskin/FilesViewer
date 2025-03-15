@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.alon.filesviewer.browser.ui"
+    namespace = "com.alon.filesviewer.login.ui"
     compileSdk = 34
 
     defaultConfig {
@@ -45,31 +45,19 @@ android {
 dependencies {
 
     // Project modules
-    implementation(project(":features:browser:domain"))
     implementation(project(":features:common:ui"))
 
-    // Android
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(libs.activityKtx)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.fragmentKtx)
-
-    // Rx
-    implementation(libs.rxKotlin)
-    implementation(libs.rxJava)
-    implementation(libs.rxAndroid)
 
     // Hilt
     implementation(libs.hilt)
     kapt(libs.hiltCompiler)
 
-    // Apache commons
-    implementation("commons-io:commons-io:2.16.1")
-
-    // Local testing
+    // Local tests
     testImplementation(libs.androidx.espresso.contrib)
     testImplementation(libs.androidx.espresso.intents)
     testImplementation(libs.junit)

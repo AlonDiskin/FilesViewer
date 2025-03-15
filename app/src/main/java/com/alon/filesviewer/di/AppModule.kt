@@ -1,4 +1,4 @@
-package com.alon.filesviewer
+package com.alon.filesviewer.di
 
 import android.app.Application
 import android.content.ContentResolver
