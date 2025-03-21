@@ -35,6 +35,7 @@ import com.alon.filesviewer.browser.ui.viewmodel.FolderBrowserViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.migration.OptionalInject
+import javax.inject.Inject
 
 @AndroidEntryPoint
 @OptionalInject
@@ -53,6 +54,7 @@ class BrowserActivity : AppCompatActivity() {
         }
     }
     private val requestPermission = registerForActivityResult(RequestPermission(),permissionRequestCallback)
+    @Inject lateinit var navigator: BrowserNavigator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -124,6 +126,10 @@ class BrowserActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_nav_search -> {
                 searchActivityLauncher.launch(Intent(this,SearchActivity::class.java))
+                true
+            }
+            R.id.action_nav_settings -> {
+                startActivity(navigator.getSettingsScreenIntent())
                 true
             }
             else -> super.onOptionsItemSelected(item)

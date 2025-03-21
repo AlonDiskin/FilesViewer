@@ -51,6 +51,7 @@ dependencies {
     implementation(project(":features:browser::domain"))
     implementation(project(":features:browser:ui"))
     implementation(project(":features:login:ui"))
+    implementation(project(":features:settings:ui"))
 
     // Hilt
     implementation(libs.hilt)

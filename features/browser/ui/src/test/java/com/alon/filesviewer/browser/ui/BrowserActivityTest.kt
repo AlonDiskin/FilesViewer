@@ -2,6 +2,7 @@ package com.alon.filesviewer.browser.ui
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -14,8 +15,9 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.Espresso.pressBack
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.espresso.Espresso
+import androidx.test.espresso.Espresso.*
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
@@ -29,12 +31,14 @@ import com.alon.filesviewer.browser.domain.model.DeviceFilesCollection
 import com.alon.filesviewer.browser.domain.model.DeviceNamedFolder
 import com.alon.filesviewer.browser.ui.controller.BrowserActivity
 import com.alon.filesviewer.browser.ui.controller.BrowserFragmentsFactory
+import com.alon.filesviewer.browser.ui.controller.BrowserNavigator
 import com.alon.filesviewer.browser.ui.controller.SearchActivity
 import com.alon.filesviewer.browser.ui.util.TestFragment
 import com.alon.filesviewer.browser.ui.util.WhiteBox
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.common.truth.Truth.assertThat
 import io.mockk.every
+import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import org.junit.Before
@@ -445,5 +449,30 @@ class BrowserActivityTest {
             val currentFragment = activity.supportFragmentManager.fragments.first()
             assertThat(currentFragment).isEqualTo(testFragment)
         }
+    }
+
+    @Test
+    fun navigateToSettingsScreen_WhenUserSelectSettingsFromMenu() {
+        // Given
+        val context: Context = ApplicationProvider.getApplicationContext()
+        val navigator: BrowserNavigator = mockk()
+        val settingsIntent = Intent("settings intent")
+
+        Intents.init()
+        every { navigator.getSettingsScreenIntent() } returns settingsIntent
+        scenario.onActivity { WhiteBox.setInternalState(it,"navigator",navigator) }
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        // When
+        openActionBarOverflowOrOptionsMenu(context)
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+        onView(withText(context.getString(R.string.title_action_nav_settings)))
+            .perform(click())
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        // Then
+        Intents.intended(IntentMatchers.hasAction(settingsIntent.action))
+
+        Intents.release()
     }
 }

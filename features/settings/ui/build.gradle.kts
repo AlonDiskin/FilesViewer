@@ -2,11 +2,10 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("kotlin-kapt")
-    alias(libs.plugins.hilt)
 }
 
 android {
-    namespace = "com.alon.filesviewer.login.ui"
+    namespace = "com.alon.filesviewer.settings.ui"
     compileSdk = 34
 
     defaultConfig {
@@ -32,9 +31,6 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    buildFeatures {
-        dataBinding = true
-    }
     testOptions {
         unitTests {
             this.isIncludeAndroidResources = true
@@ -47,16 +43,18 @@ dependencies {
     // Project modules
     implementation(project(":features:common:ui"))
 
-    // Android
+    // Android core
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+
+    // AndroidX preferences
+    implementation(libs.preferenceKtx)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
 
-    // Hilt
-    implementation(libs.hilt)
-    kapt(libs.hiltCompiler)
+    // Fragment testing
+    debugImplementation("androidx.fragment:fragment-testing-manifest:1.8.6")
 
     // Local tests
     testImplementation(libs.androidx.espresso.contrib)
@@ -72,8 +70,5 @@ dependencies {
     kaptTest(libs.dataBindingCompiler)
     testImplementation(libs.hiltTest)
     kaptTest(libs.hiltCompiler)
-}
-
-kapt {
-    correctErrorTypes = true
+    testImplementation("androidx.fragment:fragment-testing:1.8.6")
 }
