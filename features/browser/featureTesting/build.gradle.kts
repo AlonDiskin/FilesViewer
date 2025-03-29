@@ -38,6 +38,7 @@ android {
     testOptions {
         unitTests {
             this.isIncludeAndroidResources = true
+            unitTests.isIncludeAndroidResources = true
         }
     }
 }
@@ -48,6 +49,8 @@ dependencies {
     implementation(project(":features:browser:domain"))
     implementation(project(":features:browser:data"))
     implementation(project(":features:browser:ui"))
+    implementation(project(":features:browser:ui"))
+    implementation(project(":features:common:messaging"))
 
     // Android core & ui
     implementation(libs.androidx.core.ktx)
@@ -76,6 +79,7 @@ dependencies {
     kaptTest("androidx.room:room-compiler:2.6.1")
     testImplementation("androidx.room:room-testing:2.6.1")
     testImplementation("commons-io:commons-io:2.16.1")
+    testImplementation("androidx.preference:preference-ktx:1.2.1")
 }
 
 kapt {

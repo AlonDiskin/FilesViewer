@@ -2,6 +2,9 @@ import java.net.URI
 import java.net.URL
 import java.net.URLEncoder
 
+include(":features:common:messaging")
+
+
 include(":features:settings:ui")
 
 

@@ -42,6 +42,7 @@ dependencies {
 
     // Project modules
     implementation(project(":features:common:ui"))
+    implementation(project(":features:common:messaging"))
 
     // Android core
     implementation(libs.androidx.core.ktx)

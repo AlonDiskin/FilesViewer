@@ -1,7 +1,10 @@
 package com.alon.filesviewer.browser.featuretesting.di
 
+import android.app.Application
 import android.content.ContentResolver
 import android.content.Context
+import android.content.SharedPreferences
+import androidx.preference.PreferenceManager
 import androidx.test.core.app.ApplicationProvider
 import com.alon.filesviewer.browser.ui.controller.BrowserNavigator
 import dagger.Module
@@ -26,5 +29,12 @@ object TestAppModule {
     @Singleton
     fun provideNavigator(): BrowserNavigator {
         return mockk()
+    }
+
+    @Singleton
+    @Provides
+    fun provideSharedPreferences(): SharedPreferences {
+        val app = ApplicationProvider.getApplicationContext<Context>()
+        return PreferenceManager.getDefaultSharedPreferences(app)
     }
 }

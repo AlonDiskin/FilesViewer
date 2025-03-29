@@ -61,6 +61,9 @@ dependencies {
     implementation("io.reactivex.rxjava2:rxjava:2.2.19")
     implementation("io.reactivex.rxjava2:rxkotlin:2.4.0")
 
+    // Android preferences
+    implementation("androidx.preference:preference-ktx:1.2.1")
+
     debugImplementation("androidx.tracing:tracing:1.1.0")
 
     // Instrumentation testing

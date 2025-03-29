@@ -13,4 +13,15 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        app:key="files_sorting_category"
+        app:title="Files display">
+
+        <SwitchPreferenceCompat
+            app:key="@string/pref_hidden_files_key"
+            app:defaultValue="@string/pref_hidden_files_default"
+            app:title="@string/pref_hidden_files_title"/>
+
+    </PreferenceCategory>
+
 </androidx.preference.PreferenceScreen>

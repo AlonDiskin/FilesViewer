@@ -1,5 +1,6 @@
 package com.alon.filesbrowser.browser.domain
 
+import com.alon.filesviewer.browser.domain.interfaces.AppPreferenceManager
 import com.alon.filesviewer.browser.domain.interfaces.DeviceFilesRepository
 import com.alon.filesviewer.browser.domain.model.BrowseRequest
 import com.alon.filesviewer.browser.domain.model.DeviceFilesCollection
@@ -20,10 +21,11 @@ class BrowseFilesUseCaseTest {
 
     // Collaborators
     private val repo: DeviceFilesRepository = mockk()
+    private val prefManager: AppPreferenceManager = mockk()
 
     @Before
     fun setUp() {
-        useCase = BrowseDeviceFilesUseCase(repo)
+       useCase = BrowseDeviceFilesUseCase(repo,prefManager)
     }
 
     @Test
@@ -46,16 +48,18 @@ class BrowseFilesUseCaseTest {
     @Test
     fun fetchDeviceFolderFiles_WhenExecutedToBrowseFolder() {
         // Given
-        val files: Observable<Result<List<DeviceFile>>> = mockk()
+        val filesResult = Result.success<List<DeviceFile>>(emptyList())
         val request = BrowseRequest.Folder("path")
+        val hiddenEnabled = true
 
-        every { repo.getFolder(any()) } returns files
+        every { prefManager.isHiddenFilesShowingEnabled() } returns Observable.just(hiddenEnabled)
+        every { repo.getFolder(any(),any()) } returns Observable.just(filesResult)
 
         // When
-        val result = useCase.execute(request)
+        val useCaseResult = useCase.execute(request).test()
 
         // Then
-        verify(exactly = 1) { repo.getFolder(request.path) }
-        assertThat(result).isEqualTo(files)
+        verify(exactly = 1) { repo.getFolder(request.path,hiddenEnabled) }
+        useCaseResult.assertValue(filesResult)
     }
 }

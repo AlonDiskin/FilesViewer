@@ -1,12 +1,8 @@
 package com.alon.filesviewer.browser.ui.controller
 
-import android.Manifest
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -16,7 +12,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -56,9 +51,6 @@ class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener, Menu
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-        // Check storage permission
-        finishIfStoragePermissionMissing()
 
         // Setup toolbar
         setSupportActionBar(layout.toolbar)
@@ -214,17 +206,5 @@ class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener, Menu
             )
             .setPositiveButton(getString(R.string.button_dialog_positive)) { dialog, which -> dialog.dismiss() }
             .show()
-    }
-
-    private fun finishIfStoragePermissionMissing() {
-        // Check runtime permission for storage access , and finish if its missing
-        if (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            !Environment.isExternalStorageManager()
-        } else {
-            (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED)
-        }) {
-            finish()
-        }
     }
 }
