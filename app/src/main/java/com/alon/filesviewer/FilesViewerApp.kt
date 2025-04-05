@@ -1,8 +1,8 @@
 package com.alon.filesviewer
 
 import android.app.Application
-import android.preference.PreferenceManager
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.preference.PreferenceManager
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp

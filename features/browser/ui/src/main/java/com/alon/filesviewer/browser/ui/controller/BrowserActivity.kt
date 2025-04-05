@@ -53,7 +53,10 @@ class BrowserActivity : AppCompatActivity() {
         // Add custom handling for back pressing
         onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                showExitAppDialog { finish() }
+                showExitAppDialog {
+                    this.remove()
+                    onBackPressedDispatcher.onBackPressed()
+                }
             }
         })
 

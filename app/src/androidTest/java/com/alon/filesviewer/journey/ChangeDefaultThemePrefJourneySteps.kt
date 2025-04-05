@@ -1,22 +1,19 @@
 package com.alon.filesviewer.journey
 
-import android.content.Context
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.*
-import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.*
-import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
-import com.alon.filesviewer.browser.ui.R
 import com.alon.filesviewer.util.DeviceUtil
+import com.google.common.truth.Truth
 import com.mauriciotogneri.greencoffee.GreenCoffeeSteps
 import com.mauriciotogneri.greencoffee.annotations.And
 import com.mauriciotogneri.greencoffee.annotations.Given
 import com.mauriciotogneri.greencoffee.annotations.Then
 import com.mauriciotogneri.greencoffee.annotations.When
 
-class ChangeDefaultSettingsJourneySteps : GreenCoffeeSteps() {
+class ChangeDefaultThemePrefJourneySteps : GreenCoffeeSteps() {
 
     @Given("^user open app from device home$")
     fun userLaunchApp() {
@@ -33,26 +30,14 @@ class ChangeDefaultSettingsJourneySteps : GreenCoffeeSteps() {
 
     @When("^he change default theme pref$")
     fun changeAppTheme() {
-        TODO()
-    }
-
-    @And("^change default files sorting pref$")
-    fun changeSortingPref() {
-        TODO()
-    }
-
-    @When("^he navigates to browser screen$")
-    fun openBrowserScreen() {
-        TODO()
+        onView(withText("Enable dark theme"))
+            .perform(click())
+        Thread.sleep(4000)
     }
 
     @Then("^app should change theme to selected one$")
-    fun appChangeTheme() {
-        TODO()
-    }
-
-    @And("^list app files according to selected sorting$")
-    fun changeSorting() {
-        TODO()
+    fun themeShouldChange() {
+        Truth.assertThat(AppCompatDelegate.getDefaultNightMode())
+            .isEqualTo(AppCompatDelegate.MODE_NIGHT_YES)
     }
 }

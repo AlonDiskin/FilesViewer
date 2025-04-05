@@ -38,6 +38,9 @@ android {
     buildFeatures {
         dataBinding = true
     }
+    testOptions {
+        execution = "ANDROIDX_TEST_ORCHESTRATOR"
+    }
 }
 
 dependencies {
@@ -81,6 +84,7 @@ dependencies {
     kaptAndroidTest(libs.dataBindingCompiler)
     androidTestImplementation(libs.hilt)
     androidTestImplementation(libs.hiltTest)
+    androidTestUtil("androidx.test:orchestrator:1.5.1")
     kaptAndroidTest(libs.hiltCompiler)
     androidTestImplementation(libs.greenCoffee)
 }
