@@ -1,7 +1,7 @@
 package com.alon.filesviewer.browser.featuretesting.browser
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.alon.filesviewer.browser.data.local.LocalStorageRepository
+import com.alon.filesviewer.browser.data.local.LocalFilesRepository
 import com.mauriciotogneri.greencoffee.GreenCoffeeConfig
 import com.mauriciotogneri.greencoffee.GreenCoffeeTest
 import com.mauriciotogneri.greencoffee.ScenarioConfig
@@ -57,11 +57,11 @@ class BrowserErrorHandledStepsRunner(scenario: ScenarioConfig) : GreenCoffeeTest
     var hiltRule = HiltAndroidRule(this)
 
     @Inject
-    lateinit var localDataSource: LocalStorageRepository
+    lateinit var filesRepo: LocalFilesRepository
 
     @Test
     fun test() {
         hiltRule.inject()
-        start(BrowserErrorHandledSteps(localDataSource))
+        start(BrowserErrorHandledSteps(filesRepo))
     }
 }

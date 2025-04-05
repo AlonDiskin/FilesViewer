@@ -18,6 +18,4 @@ class FolderFileBatches(file: File) {
     val firstBatch get() = batches[0]
     val secondBatch get() = batches[1]
     val thirdBatch get() = batches[2]
-
-
 }

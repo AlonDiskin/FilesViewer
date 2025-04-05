@@ -47,6 +47,7 @@ dependencies {
     // Project modules
     implementation(project(":features:common:ui"))
 
+    // Android
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

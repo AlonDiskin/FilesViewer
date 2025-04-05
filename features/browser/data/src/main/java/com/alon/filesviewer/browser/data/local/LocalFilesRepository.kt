@@ -12,21 +12,22 @@ import javax.inject.Singleton
 @Singleton
 class LocalFilesRepository @Inject constructor(private val mapper: DeviceFileMapper) {
 
-    fun search(query: String,path: String): Observable<Result<List<DeviceFile>>> {
+    fun search(query: String,path: String, includeHidden: Boolean): Observable<Result<List<DeviceFile>>> {
         return Single.create { it.onSuccess(FolderFileBatches(File(path))) }
             .subscribeOn(Schedulers.io())
             .flatMapObservable { batches -> searchBatches(batches,query) }
+            .map { result -> filterSearchResultHidden(includeHidden, result)}
     }
 
-    fun getFolderFiles(path: String): Observable<Result<List<DeviceFile>>> {
+    fun getFolderFiles(path: String, includeHidden: Boolean): Observable<Result<List<DeviceFile>>> {
         return if (path.isEmpty()) {
             Observable.just(Result.success(emptyList()))
         } else {
             return Observable.create<Result<List<DeviceFile>>> { emitter ->
-                val folderObserver = DeviceFolderObserver(path) { emitter.onNext(fetchFolderFiles(path)) }
+                val folderObserver = DeviceFolderObserver(path) { emitter.onNext(fetchFolderFiles(path,includeHidden)) }
 
                 folderObserver.startObserving()
-                emitter.onNext(fetchFolderFiles(path))
+                emitter.onNext(fetchFolderFiles(path,includeHidden))
                 emitter.setCancellable { folderObserver.stopObserving() }
             }
                 .subscribeOn(Schedulers.io())
@@ -45,12 +46,15 @@ class LocalFilesRepository @Inject constructor(private val mapper: DeviceFileMap
         }
     }
 
-    private fun fetchFolderFiles(path: String): Result<List<DeviceFile>> {
+    private fun fetchFolderFiles(path: String,includeHidden: Boolean): Result<List<DeviceFile>> {
         return if (isFileDir(path)) {
             val folder = File(path)
             try {
                 folder.listFiles()?.let { files ->
-                    Result.success(files.map { file -> mapper.map(file) })
+                    Result.success(
+                        files.filter { file -> filterHiddenFile(file,includeHidden)}
+                            .map { file -> mapper.map(file) }
+                    )
                 } ?: run {
                     val errorMessage = "Access Denied: $path"
                     Result.failure(BrowserError.AccessDenied(errorMessage))
@@ -94,5 +98,32 @@ class LocalFilesRepository @Inject constructor(private val mapper: DeviceFileMap
 
         }
             .subscribeOn(Schedulers.io())
+    }
+
+    private fun filterSearchResultHidden(includeHidden: Boolean,result: Result<List<DeviceFile>>): Result<List<DeviceFile>> {
+        when(result.isSuccess) {
+            true -> {
+                val files = result.getOrNull()!!
+                return Result.success(
+                    files.filter { resFile ->
+                        val file = File(resFile.path)
+                        if (!includeHidden) {
+                            !file.isHidden
+                        } else {
+                            true
+                        }
+                    }
+                )
+            }
+            false -> return result
+        }
+    }
+
+    private fun filterHiddenFile(file: File, includeHidden: Boolean): Boolean {
+        return if (!includeHidden) {
+            !file.isHidden
+        } else {
+            true
+        }
     }
 }

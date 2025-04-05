@@ -31,4 +31,5 @@
     <string name="error_message_access_denied">Access to this directory has been restricted by android</string>
     <string name="error_message_browser_feature">Browser feature error! our team will fix it soon!</string>
     <string name="title_dialog_error">File Error</string>
+    <string name="title_action_nav_settings">Settings</string>
 </resources>

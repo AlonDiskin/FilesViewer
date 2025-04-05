@@ -23,6 +23,7 @@ constraintlayout = "2.1.4"
 greenCoffee = "3.6.0"
 fragment = "1.8.5"
 androidxTesting = "2.1.0"
+preference = "1.2.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -51,6 +52,7 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 activityKtx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activity" }
 greenCoffee = { group = "com.github.mauriciotogneri", name = "green-coffee", version.ref = "greenCoffee" }
 fragmentKtx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragment" }
+preferenceKtx = { group = "androidx.preference", name = "preference-ktx", version.ref = "preference" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

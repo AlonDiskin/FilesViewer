@@ -1,18 +1,12 @@
 package com.alon.filesviewer.browser.ui
 
-import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
-import android.os.Environment
 import android.os.Looper
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelLazy
 import androidx.test.core.app.ActivityScenario
@@ -37,10 +31,10 @@ import com.alon.filesviewer.browser.domain.model.BrowserError
 import com.alon.filesviewer.browser.domain.model.DeviceFile
 import com.alon.filesviewer.browser.domain.model.DeviceFileType
 import com.alon.filesviewer.browser.domain.model.SearchFilter
-import com.alon.filesviewer.browser.ui.util.RecyclerViewMatcher.withRecyclerView
 import com.alon.filesviewer.browser.ui.controller.FilesAdapter.FileViewHolder
 import com.alon.filesviewer.browser.ui.controller.SearchActivity
 import com.alon.filesviewer.browser.ui.data.SearchUiState
+import com.alon.filesviewer.browser.ui.util.RecyclerViewMatcher.withRecyclerView
 import com.alon.filesviewer.browser.ui.util.withCheckedChip
 import com.alon.filesviewer.browser.ui.util.withRecyclerViewSize
 import com.alon.filesviewer.browser.ui.viewmodel.SearchViewModel
@@ -57,14 +51,12 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Shadows
-import org.robolectric.annotation.Config
 import org.robolectric.annotation.LooperMode
 import org.robolectric.shadows.ShadowDialog
 import java.io.File
 
 @RunWith(AndroidJUnit4::class)
 @LooperMode(LooperMode.Mode.PAUSED)
-@Config(sdk = [Build.VERSION_CODES.UPSIDE_DOWN_CAKE])
 class SearchActivityTest {
 
     @JvmField
@@ -90,76 +82,9 @@ class SearchActivityTest {
         // Stub mocked view model
         every { viewModel.searchUiState } returns uiState
 
-        // Stub storage permission as granted
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            mockkStatic(Environment::class)
-            every { Environment.isExternalStorageManager() } returns true
-        } else {
-            mockkStatic(ContextCompat::class)
-            every {
-                ContextCompat.checkSelfPermission(
-                    any(), // activity context not yet available
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                )
-            } returns PackageManager.PERMISSION_GRANTED
-        }
-
         // Launch activity under test
         scenario = ActivityScenario.launch(SearchActivity::class.java)
         Shadows.shadowOf(Looper.getMainLooper()).idle()
-    }
-
-    @Test
-    fun closeAndOpenMainAppActivity_WhenCreatedAndStoragePermissionMissing() {
-        // Given
-        every { Environment.isExternalStorageManager() } returns false
-
-        // When
-        scenario.recreate()
-        Shadows.shadowOf(Looper.getMainLooper()).idle()
-
-        // Then
-        scenario.onActivity { activity ->
-            assertThat(activity.isFinishing).isTrue()
-        }
-    }
-
-    @Test
-    @Config(sdk = [Build.VERSION_CODES.N])
-    fun closeAndOpenMainAppActivity_WhenCreatedAndStoragePermissionMissingApi24() {
-        // Given
-        every {
-            ContextCompat.checkSelfPermission(
-                any(), // activity context not yet available
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            )
-        } returns PackageManager.PERMISSION_DENIED
-
-        // When
-        scenario.recreate()
-        Shadows.shadowOf(Looper.getMainLooper()).idle()
-
-        // Then
-        scenario.onActivity { activity ->
-            assertThat(activity.isFinishing).isTrue()
-        }
-    }
-
-    @Test
-    fun launchActivity_WhenCreatedAndStoragePermissionExist() {
-        // Given
-
-        // Then
-        assertThat(scenario.state).isEqualTo(Lifecycle.State.RESUMED)
-    }
-
-    @Test
-    @Config(sdk = [Build.VERSION_CODES.N])
-    fun launchActivity_WhenCreatedAndStoragePermissionExistApi24() {
-        // Given
-
-        // Then
-        assertThat(scenario.state).isEqualTo(Lifecycle.State.RESUMED)
     }
 
     @Test

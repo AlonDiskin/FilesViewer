@@ -36,3 +36,16 @@ Feature: Browse device files
       | path not recognized   | show dir not exist message           |
       | internal feature fail | show feature fail  message           |
       | access restricted     | show show access restricted message  |
+
+  @hidden-files-pref-change
+  Scenario Outline: Browsed Hidden files shown according to preference
+    Given user has hidden files in device root folder
+    And hidden files listing pref is "<current_pref>"
+    When user open device root folder in browser screen
+    Then hidden files display should be according to pref
+    When preference is changed to "<pref_change>"
+    Then browser should display hidden files accordingly
+    Examples:
+      | current_pref | pref_change |
+      | disabled     | enabled     |
+      | enabled      | disabled    |

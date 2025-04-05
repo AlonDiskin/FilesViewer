@@ -15,7 +15,7 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import com.alon.filesviewer.browser.data.local.LocalStorageRepository
+import com.alon.filesviewer.browser.data.local.LocalFilesRepository
 import com.alon.filesviewer.browser.domain.model.BrowserError
 import com.alon.filesviewer.browser.domain.model.DeviceFile
 import com.alon.filesviewer.browser.ui.R
@@ -32,7 +32,7 @@ import org.junit.rules.TemporaryFolder
 import org.robolectric.Shadows
 import org.robolectric.shadows.ShadowDialog
 
-class BrowserErrorHandledSteps(localDataSource: LocalStorageRepository) : GreenCoffeeSteps() {
+class BrowserErrorHandledSteps(filesRepo: LocalFilesRepository) : GreenCoffeeSteps() {
 
     // Browser feature ui
     private lateinit var scenario: ActivityScenario<BrowserActivity>
@@ -43,7 +43,7 @@ class BrowserErrorHandledSteps(localDataSource: LocalStorageRepository) : GreenC
     init {
         // Stub mocked data source
         //every { localDataSource.getCollectionFiles(any()) } returns errorSubject
-        every { localDataSource.getFolderFiles(any()) } returns errorSubject
+        every { filesRepo.getFolderFiles(any(),any()) } returns errorSubject
 
         // Stub storage permission as granted
         mockkStatic(Environment::class)

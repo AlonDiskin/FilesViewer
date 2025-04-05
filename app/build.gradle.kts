@@ -38,6 +38,9 @@ android {
     buildFeatures {
         dataBinding = true
     }
+    testOptions {
+        execution = "ANDROIDX_TEST_ORCHESTRATOR"
+    }
 }
 
 dependencies {
@@ -51,6 +54,7 @@ dependencies {
     implementation(project(":features:browser::domain"))
     implementation(project(":features:browser:ui"))
     implementation(project(":features:login:ui"))
+    implementation(project(":features:settings:ui"))
 
     // Hilt
     implementation(libs.hilt)
@@ -59,6 +63,9 @@ dependencies {
     // Rx
     implementation("io.reactivex.rxjava2:rxjava:2.2.19")
     implementation("io.reactivex.rxjava2:rxkotlin:2.4.0")
+
+    // Android preferences
+    implementation("androidx.preference:preference-ktx:1.2.1")
 
     debugImplementation("androidx.tracing:tracing:1.1.0")
 
@@ -77,6 +84,7 @@ dependencies {
     kaptAndroidTest(libs.dataBindingCompiler)
     androidTestImplementation(libs.hilt)
     androidTestImplementation(libs.hiltTest)
+    androidTestUtil("androidx.test:orchestrator:1.5.1")
     kaptAndroidTest(libs.hiltCompiler)
     androidTestImplementation(libs.greenCoffee)
 }

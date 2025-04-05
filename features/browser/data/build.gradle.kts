@@ -34,6 +34,7 @@ android {
     }
     testOptions {
         unitTests.isReturnDefaultValues = true
+        unitTests.isIncludeAndroidResources = true
     }
 }
 
@@ -41,6 +42,7 @@ dependencies {
 
     // Project modules
     implementation(project(":features:browser:domain"))
+    implementation(project(":features:common:messaging"))
 
     // Rx
     implementation(libs.rxKotlin)
@@ -66,6 +68,7 @@ dependencies {
     testImplementation("androidx.room:room-runtime:2.6.1")
     kaptTest("androidx.room:room-compiler:2.6.1")
     testImplementation("androidx.room:room-testing:2.6.1")
+    testImplementation("androidx.preference:preference-ktx:1.2.1")
 }
 
 kapt {

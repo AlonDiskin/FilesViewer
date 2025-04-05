@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_hidden_files_title">Show hidden files</string>
+    <string name="pref_hidden_files_key">hidden_files</string>
+    <string name="pref_hidden_files_default">true</string>
+</resources>

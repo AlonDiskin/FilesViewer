@@ -45,3 +45,15 @@ Feature: Search device files
     | folder_name | file_name  |
     | my folder   | file_0.txt |
 
+  @hidden-files-pref-change
+  Scenario Outline: Hidden files display preference changed
+    Given user has hidden files in device root folder
+    And hidden files listing pref is "<current_pref>"
+    When user search for hidden files via search screen
+    Then hidden files search results should be shown according to pref
+    When preference is changed to "<pref_change>"
+    Then search screen should list hidden files results according to pref
+    Examples:
+      | current_pref | pref_change |
+      | disabled     | enabled     |
+      | enabled      | disabled    |
