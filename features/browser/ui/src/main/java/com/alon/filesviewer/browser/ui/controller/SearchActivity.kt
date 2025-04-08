@@ -87,6 +87,12 @@ class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener, Menu
 
             // Handle error
             handleError(state.error)
+
+            // Update progress bar
+            layout.progressBar.visibility = when(state.isLoading) {
+                true ->  View.VISIBLE
+                false ->  View.GONE
+            }
         }
     }
 

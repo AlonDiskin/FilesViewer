@@ -80,7 +80,7 @@ class SearchViewModel @Inject constructor(
 
     private fun search() {
         _searchUiState.value?.let { state ->
-            _searchUiState.value = state.copy(error = null)
+            _searchUiState.value = state.copy(isLoading = true,error = null)
             searchSubject.onNext(SearchRequest(state.query,state.filter))
         }
     }
@@ -90,14 +90,14 @@ class SearchViewModel @Inject constructor(
             update.isSuccess -> {
                 _searchUiState.value!!.let { state ->
                     val searchResults = update.getOrNull()!!
-                    _searchUiState.value = state.copy(results = searchResults)
+                    _searchUiState.value = state.copy(results = searchResults, isLoading = false)
                 }
             }
 
             update.isFailure -> {
                 _searchUiState.value!!.let { state ->
                     val error = update.exceptionOrNull() as BrowserError?
-                    _searchUiState.value = state.copy(error = error)
+                    _searchUiState.value = state.copy(error = error, isLoading = false)
                 }
             }
         }
@@ -105,7 +105,7 @@ class SearchViewModel @Inject constructor(
 
     fun clearError() {
         _searchUiState.value?.let { state ->
-            _searchUiState.value = state.copy(error = null)
+            _searchUiState.value = state.copy(error = null, isLoading = false)
         }
     }
 
