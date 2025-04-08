@@ -122,9 +122,8 @@ class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener, Menu
     }
 
     override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-        layout.chipGroup.visibility = View.INVISIBLE
-        onBackPressed()
-        return true
+        onBackPressedDispatcher.onBackPressed()
+        return false
     }
 
     private fun handleError(error: BrowserError?) {
