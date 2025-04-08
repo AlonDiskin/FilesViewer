@@ -137,7 +137,20 @@ class SearchViewModelTest {
     }
 
     @Test
-    fun updateUiState_WhenModelUpdateDeviceFilesSearchResults() {
+    fun updateUiStateAsLoading_WhenSearchResultsAreLoadedFromModel() {
+        // Given
+        val query = "query"
+        val expectedLoadingState = true
+
+        // When
+        viewModel.setQuery(query)
+
+        // Then
+        assertThat(viewModel.searchUiState.value!!.isLoading).isEqualTo(expectedLoadingState)
+    }
+
+    @Test
+    fun updateUiStateSearchResults_WhenModelUpdateDeviceFilesSearchResults() {
         // Given
         val query = "query"
         val files = mockk<List<DeviceFile>>()
@@ -154,7 +167,7 @@ class SearchViewModelTest {
     }
 
     @Test
-    fun updateUiState_WhenModelFailToDeliverSearchResults() {
+    fun updateUiStateError_WhenModelFailToDeliverSearchResults() {
         // Given
         val error = BrowserError.Internal("")
 

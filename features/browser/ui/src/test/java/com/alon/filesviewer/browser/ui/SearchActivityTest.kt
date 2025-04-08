@@ -22,10 +22,8 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.RootMatchers.isPlatformPopup
-import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.alon.filesviewer.browser.domain.model.BrowserError
 import com.alon.filesviewer.browser.domain.model.DeviceFile
@@ -363,5 +361,31 @@ class SearchActivityTest {
         assertThat(scenario.result.resultData.getStringExtra(SearchActivity.RESULT_DIR_PATH))
             .isEqualTo(results.first().path)
 
+    }
+
+    @Test
+    fun showProgressBar_WhenSearchResultsLoaded() {
+        // Given
+
+        // When
+        uiState.value = SearchUiState(isLoading = true)
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        // Then
+        onView(withId(R.id.progressBar))
+            .check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun hideProgressBar_WhenSearchResultsNotLoaded() {
+        // Given
+
+        // When
+        uiState.value = SearchUiState(isLoading = false)
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        // Then
+        onView(withId(R.id.progressBar))
+            .check(matches(withEffectiveVisibility(Visibility.GONE)))
     }
 }

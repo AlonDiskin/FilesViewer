@@ -87,6 +87,12 @@ class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener, Menu
 
             // Handle error
             handleError(state.error)
+
+            // Update progress bar
+            layout.progressBar.visibility = when(state.isLoading) {
+                true ->  View.VISIBLE
+                false ->  View.GONE
+            }
         }
     }
 
@@ -122,9 +128,8 @@ class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener, Menu
     }
 
     override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-        layout.chipGroup.visibility = View.INVISIBLE
-        onBackPressed()
-        return true
+        onBackPressedDispatcher.onBackPressed()
+        return false
     }
 
     private fun handleError(error: BrowserError?) {
